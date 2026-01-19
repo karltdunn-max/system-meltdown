@@ -1,0 +1,18 @@
+tests:
+  - name: "Check index.html exists"
+    type: file_exists
+    path: "index.html"
+
+  - name: "Check main.js exists"
+    type: file_exists
+    path: "main.js"
+
+  - name: "Verify HTML contains canvas tag"
+    type: search
+    file: "index.html"
+    pattern: "<canvas"
+
+  - name: "Verify JS has game loop function"
+    type: search
+    file: "main.js"
+    pattern: "function gameLoop"

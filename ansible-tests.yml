@@ -1,0 +1,12 @@
+tests:
+  - name: "Ping all hosts"
+    inventory: "/mnt/shooter/inventory"
+    playbook: "ping.yml"
+
+  - name: "Run site configuration"
+    inventory: "/mnt/shooter/inventory"
+    playbook: "site.yml"
+
+  - name: "Check webserver role"
+    inventory: "/mnt/shooter/inventory"
+    playbook: "webserver.yml"
