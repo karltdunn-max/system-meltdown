@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+		
+    <title>Karl Dunn - Senior Systems Integration Engineer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Hero Background */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* Animated circuit board pattern */
+        .circuit-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .circuit-line.horizontal {
+            height: 2px;
+            width: 100%;
+        }
+
+        .circuit-line.vertical {
+            width: 2px;
+            height: 100%;
+        }
+
+        .circuit-line:nth-child(1) { top: 15%; animation-delay: 0s; }
+        .circuit-line:nth-child(2) { top: 35%; animation-delay: 1s; }
+        .circuit-line:nth-child(3) { top: 55%; animation-delay: 2s; }
+        .circuit-line:nth-child(4) { top: 75%; animation-delay: 3s; }
+        .circuit-line:nth-child(5) { left: 20%; animation-delay: 0.5s; }
+        .circuit-line:nth-child(6) { left: 50%; animation-delay: 1.5s; }
+        .circuit-line:nth-child(7) { left: 80%; animation-delay: 2.5s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Floating tech icons */
+        .tech-float {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.15;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .tech-float:nth-child(8) { top: 10%; left: 10%; animation-delay: 0s; }
+        .tech-float:nth-child(9) { top: 20%; right: 15%; animation-delay: 2s; }
+        .tech-float:nth-child(10) { bottom: 15%; left: 20%; animation-delay: 4s; }
+        .tech-float:nth-child(11) { bottom: 25%; right: 25%; animation-delay: 6s; }
+
+        /* Hero Content */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 1200px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-section {
+            margin-bottom: 40px;
+        }
+
+        .profile-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #0077be);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 80px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.4);
+            animation: float 4s ease-in-out infinite;
+            border: 5px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .hero-name {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title {
+            font-size: 32px;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .hero-summary {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 900px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .contact-item a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #00d4ff, #0077be);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.6);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 80px 40px;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+.skills-grid {
+    display: flex;          /* ← THIS makes it horizontal */
+    flex-direction: row;    /* ← Ensures left‑to‑right layout */
+    flex-wrap: nowrap;      /* ← Prevents items from dropping to next line */
+    gap: 30px;              /* ← Spacing between items */
+    overflow-x: auto;       /* ← Adds horizontal scroll on small screens */
+}
+
+@media (max-width: 1000px) {
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 119, 190, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease-out both;
+        }
+
+        .stat-box:nth-child(1) { animation-delay: 0.1s; }
+        .stat-box:nth-child(2) { animation-delay: 0.2s; }
+        .stat-box:nth-child(3) { animation-delay: 0.3s; }
+        .stat-box:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-box:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 119, 190, 0.1));
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 56px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Skills Section */
+        .skills-section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+            color: #00d4ff;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+
+.skills-grid { 
+			display: flex; 
+			flex-direction: row; 
+			justify-content: space-between; /* or center, or flex-start */ 
+			gap: 30px; 
+			flex-wrap: nowrap; /* prevents wrapping */ 
+			overflow-x: auto; /* allows scrolling on small screens */
+			}
+
+@media (max-width: 1000px) {
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+        .skill-category {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 0, 0, 0.3));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.6);
+        }
+
+        .skill-category h3 {
+            font-size: 24px;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-category .icon {
+            font-size: 32px;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Experience Section */
+        .experience-section {
+            padding: 80px 40px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .experience-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .experience-timeline {
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .experience-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #00d4ff, transparent);
+        }
+
+        .experience-item {
+            margin-bottom: 50px;
+            position: relative;
+            animation: fadeIn 0.8s ease-out both;
+        }
+
+        .experience-item:nth-child(1) { animation-delay: 0.1s; }
+        .experience-item:nth-child(2) { animation-delay: 0.2s; }
+        .experience-item:nth-child(3) { animation-delay: 0.3s; }
+
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            left: -56px;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+
+        .experience-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 0, 0, 0.3));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .experience-card:hover {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .experience-title {
+            font-size: 26px;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+
+        .experience-company {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 5px;
+        }
+
+        .experience-duration {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        .experience-highlights {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .highlight-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 3px solid #00d4ff;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .highlight-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        .highlight-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .highlight-text {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+            40% { transform: translateY(-20px) translateX(-50%); }
+            60% { transform: translateY(-10px) translateX(-50%); }
+        }
+
+        .scroll-indicator span {
+            font-size: 40px;
+            color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .hero-name {
+                font-size: 48px;
+            }
+
+            .hero-title {
+                font-size: 24px;
+            }
+
+            .hero-summary {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .experience-timeline {
+                padding-left: 30px;
+            }
+
+            .experience-item::before {
+                left: -36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <!-- Animated Background Elements -->
+        <div class="circuit-line horizontal"></div>
+        <div class="circuit-line horizontal"></div>
+        <div class="circuit-line horizontal"></div>
+        <div class="circuit-line horizontal"></div>
+        <div class="circuit-line vertical"></div>
+        <div class="circuit-line vertical"></div>
+        <div class="circuit-line vertical"></div>
+        
+        <div class="tech-float">🐧</div>
+        <div class="tech-float">☁️</div>
+        <div class="tech-float">⚙️</div>
+        <div class="tech-float">🔧</div>
+
+        <div class="hero-content">
+            <div class="profile-section">
+                <div class="profile-image">👨‍💻</div>
+                <h1 class="hero-name">Karl Dunn</h1>
+                <h2 class="hero-title">Senior Systems Integration Engineer</h2>
+                <p class="hero-summary">
+                    15+ years leading technical operations for enterprise applications, Linux/Unix systems, and databases. 
+                    Expert in automating infrastructure and CI/CD pipelines, reducing deployment time by up to 70%.
+                </p>
+				</div>
+               
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📱</span>
+                    <a href="tel:469-219-1153">469-219-1153</a>
+                </div>
+                <div class="contact-item">
+                    <span>✉️</span>
+                    <a href="mailto:karl.t.dunn@gmail.com">karl.t.dunn@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <span>💼</span>
+                    <a href="https://linkedin.com/in/karltdunn" target="_blank">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#experience" class="cta-button cta-primary">View Experience</a>
+                <a href="#skills" class="cta-button cta-secondary">Technical Skills</a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>↓</span>
+        </div>
+    </div>
+
+ <div class="divider"></div>
+
+  <h2 class="section-title">Performance Metrics 📈</h2>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-number">15+</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">85%</div>
+      <div class="stat-label">MTTR Reduction</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">70%</div>
+      <div class="stat-label">Deployment Time Saved</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">99%</div>
+      <div class="stat-label">System Availability</div>
+    </div>
+  </div>
+
+		
+		<h2 class="section-title">Technical Skills 🎯</h2>
+		
+			<!-- TECHNICAL SKILLS SECTION -->
+<div id="skills-section">
+<table width="100%" border="0" cellspacing="20" cellpadding="20"> 
+
+  <tr>
+    <td align="center">
+      <table border="0" cellspacing="20" cellpadding="10" bgcolor="rgba(0,0,0,0.5)" style="border-radius:10px;">
+        <tr>
+
+           <td align="center">
+            <a href="linux_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="30"><br>
+              <font face="Verdana">Linux / Unix</font>
+            </a>
+          </td>
+		  
+		    <td align="center">
+            <a href="html_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="30"><br>
+              <font face="Verdana">HTML</font>
+            </a>
+          </td>
+		  
+		  <td align="center">
+            <a href="ansible_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg" height="30"><br>
+              <font face="Verdana">Ansible</font>
+            </a>
+          </td>
+		  
+		     <td align="center">
+            <a href="remedy_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="remedy.png" height="30"><br>
+              <font face="Verdana">Remedy</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="hadoop_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/hadoop/hadoop-original.svg" height="30"><br>
+              <font face="Verdana">Hadoop</font>
+            </a>
+          </td>
+
+
+          <td align="center">
+            <a href="splunk_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="splunk.png" height="30"><br>
+              <font face="Verdana">Splunk</font>
+            </a>
+          </td>
+
+<td align="center">
+            <a href="tableau_resume_project.html" style="text-decoration:none; color:white;">
+              <img src="https://logos-world.net/wp-content/uploads/2021/10/Tableau-Symbol.png" height="30"><br>
+              <font face="Verdana">Tableau</font>
+            </a>
+          </td>
+
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</div>
+
+
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3><span class="icon">🐧</span> Linux/Unix & Cloud</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">Linux/Unix Admin</span>
+                    <span class="skill-tag">Shell Scripting</span>
+                    <span class="skill-tag">VMware</span>
+                    <span class="skill-tag">Cloud Operations</span>
+					<span class="skill-tag">Hadoop / Kafka / Zookeeper</span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <h3><span class="icon">🔄</span> DevOps & Automation</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">GitLab</span>
+                    <span class="skill-tag">Jenkins</span>
+                    <span class="skill-tag">Ansible</span>
+                    <span class="skill-tag">CI/CD</span>
+                    <span class="skill-tag">Docker</span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <h3><span class="icon">💾</span> Databases</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">Oracle</span>
+                    <span class="skill-tag">SQL Server</span>
+                    <span class="skill-tag">PL/SQL</span>
+                    <span class="skill-tag">PowerShell</span>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <h3><span class="icon">📊</span> Monitoring & Analytics</h3>
+                <div class="skill-list">
+                    <span class="skill-tag">New Relic</span>
+                    <span class="skill-tag">Kibana</span>
+                    <span class="skill-tag">Elasticsearch</span>
+                    <span class="skill-tag">Catchpoint</span>
+                </div>
+            </div>
+ 
+
+<div class="skill-category">
+    <h3><span class="icon">⚙️</span> App Tier & Diagnostics</h3>
+    <div class="skill-list">
+        <span class="skill-tag">Apache WebLogic</span>
+        <span class="skill-tag">JVM Diagnostics</span>
+        <span class="skill-tag">Thread/Heap Dumps</span>
+        <span class="skill-tag">Root Cause Analysis</span>
+    </div>
+</div>
+
+<div class="skill-category">
+    <h3><span class="icon">📋</span> ITSM & Operations</h3>
+    <div class="skill-list">
+        <span class="skill-tag">BMC Remedy (ITIL)</span>
+        <span class="skill-tag">Jira Service Management</span>
+        <span class="skill-tag">Runbook Automation</span>
+        <span class="skill-tag">Incident & Change Management</span>
+        <span class="skill-tag">SLA Compliance / ITIL Framework</span>
+    </div>
+</div>
+
+
+</div> </div> <div class="experience-section" id="experience">
+        <div class="experience-container">
+            <h2 class="section-title">Professional Experience</h2>
+            
+            <div class="experience-timeline">
+                <div class="experience-item">
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div>
+                                <h3 class="experience-title">Tier 2 Production / Application Support Engineer</h3>
+                                <p class="experience-company">Verizon | Irving, TX</p>
+                            </div>
+                            <p class="experience-duration">May 2020 – Aug 2025</p>
+                        </div>
+                        <div class="experience-highlights">
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🚨</span>
+                                <p class="highlight-text">Overhauled Sev-1 incident protocols, reducing MTTR by 85% across 72+ critical applications</p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">☁️</span>
+                                <p class="highlight-text">Architected IaaS and PaaS based cloud Hadoop operations, achieving 10% reduction in downtime and 50% decrease in defects</p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🔄</span>
+                                <p class="highlight-text">Streamlined deployment workflows using GitLab, Jenkins, and Ansible, ensuring 99% system availability</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="experience-item">
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div>
+                                <h3 class="experience-title">Senior Systems Integration Engineer</h3>
+                                <p class="experience-company">TEOCO Corporation | Dallas, TX</p>
+                            </div>
+                            <p class="experience-duration">Jan 2013 – Dec 2019</p>
+                        </div>
+                        <div class="experience-highlights">
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🔧</span>
+                                <p class="highlight-text">
+                                    Led migration of AT&T Linux system platforms, cutting resolution times by 80%
+                                </p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">📊</span>
+                                <p class="highlight-text">
+                                    Developed automated ETL scripts and PL/SQL queries, increasing operational visibility by 30%
+                                </p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">✅</span>
+                                <p class="highlight-text">
+                                    Maintained 98% SLA adherence rate managing BSS billing and CRM systems on Apache WebLogic
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experience-item">
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div>
+                                <h3 class="experience-title">Database Architect</h3>
+                                <p class="experience-company">AIRCOM International (Now TEOCO) | Dallas, TX</p>
+                            </div>
+                            <p class="experience-duration">Jun 2009 – Jan 2013</p>
+                        </div>
+                        <div class="experience-highlights">
+                            <div class="highlight-item">
+                                <span class="highlight-icon">💾</span>
+                                <p class="highlight-text">
+                                    Implemented metadata archiving for 1M+ files daily, enhancing data retrieval efficiency
+                                </p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">⚡</span>
+                                <p class="highlight-text">
+                                    Developed HDFS storage solutions reducing query latency by 25%
+                                </p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🔒</span>
+                                <p class="highlight-text">
+                                    Deployed GSM/UMTS/LTE OSS solutions using VMware with secure FTP, SSH, and SMTP protocols
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div
+
+                <div class="experience-item">
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div>
+                                <h3 class="experience-title">Implementation Solutions Engineer</h3>
+                                <p class="experience-company">AT&T | Richardson, TX</p>
+                            </div>
+                            <p class="experience-duration">Apr 1999 – Apr 2009</p>
+                        </div>
+                        <div class="experience-highlights">
+                            <div class="highlight-item">
+                                <span class="highlight-icon">💳</span>
+                                <p class="highlight-text">Designed custom billing tools for AT&T and Cingular Wireless using Oracle and Shell scripting, supporting 24/7 billing cycles</p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">📊</span>
+                                <p class="highlight-text">Performed complex ETL processing for 3GPP data (HSS/HLR/MME) repositories for strategic planning</p>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-icon">🔒</span>
+                                <p class="highlight-text">Enforced strict SOX compliance and enterprise security protocols across provisioning and GRC activities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> </div> </div> 
+			
+			
+			<a href="landing_page.html" class="back-button" style="position: fixed; top: 30px; left: 30px; padding: 15px 30px; background: rgba(0, 242, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid rgba(0, 242, 255, 0.5); border-radius: 50px; color: white; text-decoration: none; font-weight: 600; transition: all 0.3s ease; z-index: 1000;">← Back to Portfolio</a>
+
+
+
+			</body>

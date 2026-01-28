@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Incident Pac-Man – Runbook Eater</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+    :root {
+        --bg: #020617;
+        --grid-bg: #020617;
+        --wall: #0f172a;
+        --runbook: #facc15;
+        --incident: #f97373;
+        --server: #38bdf8;
+        --text: #e5e7eb;
+        --soft: #9ca3af;
+        --accent: #fb37ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 10% 0%, #1d2a5f55 0, transparent 55%),
+            radial-gradient(circle at 90% 0%, #ff4b9f33 0, transparent 55%),
+            radial-gradient(circle at 50% 100%, #4bffdf22 0, transparent 60%),
+            var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem;
+    }
+
+    header {
+        max-width: 900px;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .title {
+        font-size: 2rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        background: linear-gradient(120deg, #facc15, #fb37ff, #38bdf8, #4ade80, #facc15);
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: shimmer 6s linear infinite;
+        margin-bottom: 0.4rem;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+        color: var(--soft);
+        line-height: 1.5;
+    }
+
+    .subtitle strong {
+        color: var(--accent);
+    }
+
+    .status-bar {
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        font-size: 0.85rem;
+    }
+
+    .pill {
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148,163,184,0.6);
+        background: rgba(15,23,42,0.9);
+        color: var(--soft);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+    }
+
+    .pill span {
+        color: var(--runbook);
+    }
+
+    .game-wrapper {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .game-info {
+        font-size: 0.85rem;
+        color: var(--soft);
+        text-align: center;
+    }
+
+    .game-info strong {
+        color: var(--runbook);
+    }
+
+    .grid {
+        position: relative;
+        width: 360px;
+        height: 360px;
+        background: radial-gradient(circle at 50% 0%, rgba(56,189,248,0.25) 0, transparent 60%), var(--grid-bg);
+        border-radius: 16px;
+        border: 1px solid #1f2937;
+        box-shadow:
+            0 0 24px rgba(15,23,42,0.9),
+            0 0 40px rgba(56,189,248,0.3);
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+        overflow: hidden;
+    }
+
+    .cell {
+        border: 1px solid rgba(15,23,42,0.7);
+        position: relative;
+    }
+
+    .wall {
+        background: radial-gradient(circle at 50% 0%, #1f2937 0, #020617 70%);
+        box-shadow: inset 0 0 10px rgba(15,23,42,0.9);
+    }
+
+    .runbook {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        color: #020617;
+    }
+
+    .runbook::before {
+        content: "📘";
+        filter: drop-shadow(0 0 6px rgba(250,204,21,0.9));
+    }
+
+    .incident {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+    }
+
+    .incident::before {
+        content: "⚠️";
+        filter: drop-shadow(0 0 6px rgba(248,113,113,0.9));
+    }
+
+    .server {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .server::before {
+        content: "🖥️";
+        filter: drop-shadow(0 0 8px rgba(56,189,248,0.9));
+    }
+
+    .scoreboard {
+        font-size: 0.9rem;
+        color: var(--soft);
+    }
+
+    .scoreboard span {
+        color: var(--runbook);
+        font-weight: 700;
+    }
+
+    .hint {
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--soft);
+    }
+
+    .hint span {
+        color: var(--blue);
+    }
+
+    footer {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: var(--soft);
+        text-align: center;
+        max-width: 700px;
+        line-height: 1.5;
+    }
+
+    footer strong {
+        color: var(--accent);
+    }
+</style>
+</head>
+<body>
+<header>
+    <div class="title">Incident Pac‑Man – Runbook Eater</div>
+    <div class="subtitle">
+        A cyberpunk incident‑management mini‑game based on how <strong>Karl Dunn</strong> actually works:  
+        SEV‑1s, runbooks, root‑cause analysis, and systems that don’t panic when everything melts down.
+    </div>
+    <div class="status-bar">
+        <div class="pill">Role: <span>Incident Command / Systems Integration</span></div>
+        <div class="pill">Stack: <span>Linux · Kafka · WebLogic · CI/CD · Cloud</span></div>
+        <div class="pill">Mission: <span>Eat runbooks. Dodge incidents. Stabilize.</span></div>
+    </div>
+</header>
+
+<main class="game-wrapper">
+    <div class="game-info">
+        Use <strong>Arrow Keys</strong> to move the server.  
+        Eat all the <strong>runbooks</strong> (📘) while avoiding <strong>incidents</strong> (⚠️).  
+        This is what your resume looks like when it’s turned into a game.
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="scoreboard">
+        Runbooks eaten: <span id="score">0</span> / <span id="total">0</span>
+    </div>
+    <div class="hint">
+        Hint: This is basically your <span>MTTR reduction</span> visualized.
+    </div>
+</main>
+
+<footer>
+    In reality, Karl reduced MTTR by up to 85%, automated deployments, hardened cloud infrastructure,  
+    and built data validation frameworks that saved hundreds of thousands of dollars.  
+    <strong>This little game is just the neon, cyberpunk version of that story.</strong>
+</footer>
+
+<script>
+/*
+    Simple Pac‑Man style grid:
+    0 = empty
+    1 = wall
+    2 = runbook
+    3 = incident
+*/
+
+const layout = [
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,3,0,2,0,0,0,2,1],
+    [1,0,1,0,1,0,0,0,1,0,0,1],
+    [1,0,1,2,1,0,3,0,1,2,0,1],
+    [1,0,0,0,0,0,0,0,0,0,3,1],
+    [1,2,1,0,1,1,1,0,1,0,2,1],
+    [1,0,0,0,0,2,0,0,0,0,0,1],
+    [1,3,1,0,1,0,1,0,1,0,2,1],
+    [1,0,0,2,0,0,0,3,0,0,0,1],
+    [1,2,0,0,1,0,2,0,1,0,3,1],
+    [1,0,0,0,0,0,0,2,0,0,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+const gridEl = document.getElementById("grid");
+const scoreEl = document.getElementById("score");
+const totalEl = document.getElementById("total");
+
+const rows = layout.length;
+const cols = layout[0].length;
+
+let cells = [];
+let serverPos = { row: 1, col: 1 };
+let score = 0;
+let totalRunbooks = 0;
+
+function buildGrid() {
+    gridEl.innerHTML = "";
+    cells = [];
+    for (let r = 0; r < rows; r++) {
+        const rowArr = [];
+        for (let c = 0; c < cols; c++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            const val = layout[r][c];
+            if (val === 1) cell.classList.add("wall");
+            if (val === 2) {
+                cell.classList.add("runbook");
+                totalRunbooks++;
+            }
+            if (val === 3) cell.classList.add("incident");
+            gridEl.appendChild(cell);
+            rowArr.push(cell);
+        }
+        cells.push(rowArr);
+    }
+    totalEl.textContent = totalRunbooks;
+    drawServer();
+}
+
+function drawServer() {
+    // Clear previous
+    document.querySelectorAll(".server").forEach(el => el.classList.remove("server"));
+    cells[serverPos.row][serverPos.col].classList.add("server");
+}
+
+function moveServer(dr, dc) {
+    const nr = serverPos.row + dr;
+    const nc = serverPos.col + dc;
+    if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) return;
+    const targetVal = layout[nr][nc];
+    if (targetVal === 1) return; // wall
+
+    // Incident hit
+    if (targetVal === 3) {
+        alert("INCIDENT HIT: You got paged by a SEV‑1. Try again.");
+        // reset
+        serverPos = { row: 1, col: 1 };
+        score = 0;
+        totalRunbooks = 0;
+        buildGrid();
+        scoreEl.textContent = score;
+        return;
+    }
+
+    // Runbook eaten
+    if (targetVal === 2) {
+        layout[nr][nc] = 0;
+        score++;
+        scoreEl.textContent = score;
+        cells[nr][nc].classList.remove("runbook");
+        if (score === totalRunbooks) {
+            alert("ALL RUNBOOKS CONSUMED: MTTR crushed. System stabilized. Karl wins.");
+        }
+    }
+
+    serverPos = { row: nr, col: nc };
+    drawServer();
+}
+
+document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+        case "ArrowUp":
+            moveServer(-1, 0);
+            break;
+        case "ArrowDown":
+            moveServer(1, 0);
+            break;
+        case "ArrowLeft":
+            moveServer(0, -1);
+            break;
+        case "ArrowRight":
+            moveServer(0, 1);
+            break;
+    }
+});
+
+buildGrid();
+</script>
+</body>
+</html>

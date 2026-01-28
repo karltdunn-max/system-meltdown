@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Karl Dunn – Technical Portfolio</title>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    [id] {
+      scroll-margin-top: 120px;
+    }
+
+    /* Technical Skills background */
+    #skills-section {
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      padding: 40px 0;
+    }
+
+    /* Floating audio button */
+    #audioToggle {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-family: Verdana;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
+      z-index: 9999;
+    }
+
+    #audioToggle:hover {
+      background-color: #444444;
+    }
+
+    /* Resume button */
+    #resumeBtn {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: Verdana;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0px 0px 15px rgba(0, 188, 212, 0.5);
+      z-index: 9999;
+      transition: all 0.3s ease;
+    }
+
+    #resumeBtn:hover {
+      background-color: #0097a7;
+      box-shadow: 0px 0px 20px rgba(0, 188, 212, 0.8);
+      transform: translateY(-2px);
+    }
+
+    /* Navigation links hover effect */
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-family: Verdana;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* TRON-style Projects Section Background */
+    #projects-section {
+      background: 
+        linear-gradient(0deg, rgba(0, 188, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 188, 212, 0.03) 1px, transparent 1px),
+        radial-gradient(ellipse at center, #0a1628 0%, #000000 100%);
+      background-size: 50px 50px, 50px 50px, 100% 100%;
+      position: relative;
+      padding: 40px 0;
+    }
+
+    #projects-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00bcd4, transparent);
+      box-shadow: 0 0 20px #00bcd4;
+    }
+
+    #projects-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00bcd4, transparent);
+      box-shadow: 0 0 20px #00bcd4;
+    }
+
+    /* Modern Project Card Styling */
+    .project-row {
+      margin-bottom: 30px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 188, 212, 0.2);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0, 188, 212, 0.3);
+    }
+
+    .project-row:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 188, 212, 0.4);
+      border-color: #00bcd4;
+    }
+
+    .project-image-container {
+      position: relative;
+      overflow: hidden;
+      height: 350px;
+      background: #000;
+    }
+
+    .project-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .project-row:hover .project-image-container img {
+      transform: scale(1.05);
+    }
+
+    .project-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+      padding: 30px;
+      color: white;
+    }
+
+    .project-content-text {
+      background: linear-gradient(135deg, rgba(10, 22, 40, 0.98) 0%, rgba(5, 10, 20, 0.98) 100%);
+      padding: 35px;
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(0, 188, 212, 0.3);
+    }
+
+    .project-title {
+      font-family: Verdana, sans-serif;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #00bcd4;
+      border-left: 4px solid #00bcd4;
+      padding-left: 15px;
+      text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+    }
+
+    .project-bullet {
+      font-family: Verdana, sans-serif;
+      font-size: 15px;
+      color: #b8d4e8;
+      line-height: 2;
+      padding-left: 25px;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .project-bullet:before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #00bcd4;
+      font-weight: bold;
+      font-size: 18px;
+      text-shadow: 0 0 5px #00bcd4;
+    }
+
+    .project-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+      color: white;
+      text-decoration: none;
+      font-family: Verdana, sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+      border: 1px solid #00bcd4;
+    }
+
+    .project-link:hover {
+      transform: translateX(5px);
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.6);
+    }
+
+    .coming-soon {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
+      color: white;
+      font-family: Verdana, sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(255, 179, 0, 0.3);
+    }
+
+    /* Runbook section styling */
+    .runbook-container {
+      display: inline-block;
+      text-align: center;
+      margin: 10px 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .runbook-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .runbook-icon {
+      width: 80px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      margin: 0 auto 10px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #fff;
+    }
+
+    .runbook-icon::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+
+    .runbook-icon::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      right: 10px;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+
+    .notebook-lines {
+      position: absolute;
+      top: 30px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+    }
+
+    .notebook-lines span {
+      display: block;
+      height: 2px;
+      background: rgba(255,255,255,0.2);
+      margin: 6px 0;
+    }
+
+    .runbook-label {
+      font-family: Verdana, sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    /* Ansible Slider Styling */
+    #ansibleSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00bcd4;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 188, 212, 0.8);
+    }
+    #ansibleSlider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00bcd4;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(0, 188, 212, 0.8);
+    }
+  </style>
+</head>
+
+<body bgcolor="#F5F5F5">
+
+<!-- HEADER -->
+<table width="100%" border="0" cellspacing="0" cellpadding="20" bgcolor="#000000">
+  <tr>
+    <td align="center">
+      <font face="Verdana" color="white" size="6"><strong>Karl Dunn</strong></font><br>
+      <font face="Verdana" color="white" size="3">Application Support • Systems Integration • DevOps • Automation</font>
+    </td>
+  </tr>
+</table>
+
+<!-- HERO SECTION -->
+<table width="100%" border="0" cellspacing="0" cellpadding="30" bgcolor="white">
+  <tr>
+    <td align="center">
+      <font face="Verdana" size="6" color="black"><strong>Building Reliable Systems. Automating Everything.</strong></font><br><br>
+      <font face="Verdana" size="4" color="gray">Real-world engineering projects from enterprise environments.</font>
+    </td>
+  </tr>
+</table>
+
+<!-- RUNBOOKS SECTION -->
+<table width="100%" border="0" cellspacing="20" cellpadding="30" style="background-image: url('runbook_background.svg'); background-size: cover; background-position: center;">
+  <tr>
+    <td align="center">
+      <font face="Verdana" size="5" color="white"><strong>📚 Technical Runbooks</strong></font><br><br>
+      <font face="Verdana" size="3" color="white">Step-by-step operational guides and procedures</font>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      
+      <a href="ansible_resume_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Ansible</div>
+        </div>
+      </a>
+
+      <a href="hadoop_resume_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Hadoop</div>
+        </div>
+      </a>
+
+      <a href="tableau_resume_project.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Tableau</div>
+        </div>
+      </a>
+
+      <a href="splunk_resume_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Splunk</div>
+        </div>
+      </a>
+
+      <a href="remedy_resume_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Remedy</div>
+        </div>
+      </a>
+
+      <a href="linux_resume_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">Linux</div>
+        </div>
+      </a>
+
+      <a href="html_project_page.html" style="text-decoration:none;">
+        <div class="runbook-container">
+          <div class="runbook-icon">
+            <div class="notebook-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="runbook-label">HTML</div>
+        </div>
+      </a>
+
+    </td>
+  </tr>
+</table>
+
+<!-- TECHNICAL SKILLS SECTION -->
+<div id="skills-section">
+<table width="100%" border="0" cellspacing="20" cellpadding="20">
+  <tr>
+    <td align="center">
+      <font face="Verdana" size="5" color="black"><strong>Technical Skills</strong></font>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <table border="0" cellspacing="20" cellpadding="10" bgcolor="rgba(0,0,0,0.5)" style="border-radius:10px;">
+        <tr>
+
+          <td align="center">
+            <a href="ansible_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg" height="50"><br>
+              <font face="Verdana">Ansible</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="hadoop_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/hadoop/hadoop-original.svg" height="50"><br>
+              <font face="Verdana">Hadoop</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="tableau_resume_project.html" style="text-decoration:none; color:white;">
+              <img src="https://logos-world.net/wp-content/uploads/2021/10/Tableau-Symbol.png" height="50"><br>
+              <font face="Verdana">Tableau</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="splunk_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="splunk.png" height="50"><br>
+              <font face="Verdana">Splunk</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="remedy_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="remedy.png" height="50"><br>
+              <font face="Verdana">Remedy</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="linux_resume_project_page.html" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" height="50"><br>
+              <font face="Verdana">Linux / Unix</font>
+            </a>
+          </td>
+
+          <td align="center">
+            <a href="#htmlproj" style="text-decoration:none; color:white;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="50"><br>
+              <font face="Verdana">HTML</font>
+            </a>
+          </td>
+
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</div>
+
+<!-- PROJECTS SECTION -->
+<div id="projects-section">
+<table width="100%" border="0" cellspacing="20" cellpadding="20">
+  <tr>
+    <td align="center">
+      <font face="Verdana" size="5" color="#00bcd4" style="text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);"><strong>Real Projects I've Built</strong></font>
+    </td>
+  </tr>
+
+  <!-- ANSIBLE PROJECT -->
+  <tr id="ansible">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg" alt="Ansible Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Ansible Automation</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Automated Playbook Execution Engine</div>
+          <div class="project-bullet">Orchestrates system configurations like deploying game patches</div>
+          <div class="project-bullet">Idempotent task execution prevents duplicate operations</div>
+          <div class="project-bullet">YAML playbooks define precise server state management</div>
+          <div class="project-bullet">Inventory systems track multiple nodes in the network</div>
+          
+          <!-- Interactive Ansible Playbook Demo -->
+          <div style="margin-top: 30px; padding: 20px; background: rgba(0, 0, 0, 0.6); border-radius: 8px; border: 1px solid rgba(0, 188, 212, 0.4);">
+            <div style="font-family: 'Courier New', monospace; color: #00bcd4; font-size: 14px; margin-bottom: 15px;">
+              $ ansible-playbook -i inventory.ini ansible_game.yml -v
+            </div>
+            
+            <!-- Slider Container -->
+            <div style="margin: 20px auto; text-align: center; max-width: 400px;">
+              <div style="color: #b8d4e8; font-size: 13px; margin-bottom: 10px; font-family: Verdana;">
+                Slide to Run Ansible →
+              </div>
+              <input type="range" id="ansibleSlider" min="0" max="100" value="0" 
+                     style="width: 100%; height: 6px; background: linear-gradient(to right, #00bcd4 0%, rgba(0, 188, 212, 0.3) 0%); 
+                            border-radius: 5px; outline: none; cursor: pointer; -webkit-appearance: none;">
+            </div>
+            
+            <!-- Output Box -->
+            <div id="ansibleOutput" style="
+              background: #000; 
+              color: #00ff00; 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              padding: 15px; 
+              border-radius: 5px; 
+              height: 250px; 
+              overflow-y: auto; 
+              border: 1px solid #00bcd4;
+              white-space: pre-wrap;
+              line-height: 1.4;">
+            </div>
+          </div>
+          
+          <a href="ansible_resume_project_page.html" class="project-link">View Full Ansible Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- HADOOP PROJECT -->
+  <tr id="hadoop">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Hadoop_logo.svg" alt="Hadoop Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Hadoop Cluster Deployment</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Distributed Processing Network</div>
+          <div class="project-bullet">Multi-node architecture mirrors game server clusters</div>
+          <div class="project-bullet">HDFS replication ensures fault tolerance like game save backups</div>
+          <div class="project-bullet">MapReduce processes massive datasets in parallel operations</div>
+          <div class="project-bullet">YARN resource management optimizes computational efficiency</div>
+          <a href="hadoop_resume_project_page.html" class="project-link">View Full Hadoop Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- TABLEAU PROJECT -->
+  <tr id="tableau">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://logos-world.net/wp-content/uploads/2021/10/Tableau-Symbol.png" alt="Tableau Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Tableau Development</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Real-Time Analytics Dashboard</div>
+          <div class="project-bullet">Visualizes system metrics like game performance monitors</div>
+          <div class="project-bullet">Interactive filters allow dynamic data exploration</div>
+          <div class="project-bullet">Calculated fields process complex formulas for scoring logic</div>
+          <div class="project-bullet">Dashboard updates track KPIs similar to game leaderboards</div>
+          <a href="tableau_resume_project.html" class="project-link">View Full Tableau Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- SPLUNK PROJECT -->
+  <tr id="splunk">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://www.splunk.com/content/dam/splunk-blogs/images/en_us/2021/02/soc-team-splunk.png" alt="Splunk Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Splunk Monitoring</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Event Log Analysis & Pattern Detection</div>
+          <div class="project-bullet">SPL queries parse system logs like game console commands</div>
+          <div class="project-bullet">Real-time alerting detects critical events instantly</div>
+          <div class="project-bullet">Dashboard panels display severity levels (INFO, WARN, ERROR)</div>
+          <div class="project-bullet">Pattern analysis reduces incident response time</div>
+          
+          <!-- Interactive Splunk Slot Machine Demo -->
+          <div style="margin-top: 30px; padding: 20px; background: rgba(0, 0, 0, 0.6); border-radius: 8px; border: 1px solid rgba(0, 188, 212, 0.4);">
+            <div style="font-family: 'Courier New', monospace; color: #00bcd4; font-size: 14px; margin-bottom: 15px;">
+              index=network | timechart avg(latency) by host
+            </div>
+            
+            <!-- Slot Machine Container -->
+            <div style="margin: 20px auto; text-align: center; max-width: 500px;">
+              <div style="background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); padding: 30px; border-radius: 15px; border: 3px solid #00bcd4; box-shadow: 0 0 30px rgba(0, 188, 212, 0.5);">
+                
+                <!-- Display Reels -->
+                <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px;">
+                  <div id="reel1" style="width: 80px; height: 100px; background: #000; border: 2px solid #00bcd4; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #00bcd4; font-weight: bold; box-shadow: inset 0 0 20px rgba(0, 188, 212, 0.3);">?</div>
+                  <div id="reel2" style="width: 80px; height: 100px; background: #000; border: 2px solid #00bcd4; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #00bcd4; font-weight: bold; box-shadow: inset 0 0 20px rgba(0, 188, 212, 0.3);">?</div>
+                  <div id="reel3" style="width: 80px; height: 100px; background: #000; border: 2px solid #00bcd4; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #00bcd4; font-weight: bold; box-shadow: inset 0 0 20px rgba(0, 188, 212, 0.3);">?</div>
+                </div>
+                
+                <!-- Lever/Handle -->
+                <div style="position: relative; margin: 0 auto; width: 60px;">
+                  <div id="leverHandle" style="width: 20px; height: 80px; background: linear-gradient(to bottom, #ff0000 0%, #cc0000 100%); margin: 0 auto; border-radius: 10px; cursor: pointer; transition: transform 0.3s ease; border: 2px solid #990000; position: relative;">
+                    <div style="width: 40px; height: 40px; background: radial-gradient(circle, #ff0000 0%, #cc0000 100%); border-radius: 50%; position: absolute; top: -10px; left: -10px; border: 3px solid #990000;"></div>
+                  </div>
+                  <div style="color: #b8d4e8; font-size: 12px; margin-top: 10px; font-family: Verdana;">Pull to Query</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Output Box -->
+            <div id="splunkOutput" style="
+              background: #000; 
+              color: #00ff00; 
+              font-family: 'Courier New', monospace; 
+              font-size: 12px; 
+              padding: 15px; 
+              border-radius: 5px; 
+              height: 200px; 
+              overflow-y: auto; 
+              border: 1px solid #00bcd4;
+              white-space: pre-wrap;
+              line-height: 1.4;
+              margin-top: 20px;">
+            </div>
+          </div>
+          
+          <a href="splunk_resume_project_page.html" class="project-link">View Full Splunk Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- REMEDY PROJECT -->
+  <tr id="remedy">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://www.bmc.com/content/dam/bmc/migration/events/images/remedy-force/san-diego/RF18-SanDiego-1900x760.png" alt="Remedy Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Remedy ITSM</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Incident Ticketing & Resolution System</div>
+          <div class="project-bullet">Manages critical incidents like game-breaking bugs</div>
+          <div class="project-bullet">Root cause analysis documents failure pathways</div>
+          <div class="project-bullet">SLA tracking ensures timely resolution targets</div>
+          <div class="project-bullet">Change management prevents system disruptions</div>
+          <a href="remedy_resume_project_page.html" class="project-link">View Full Remedy Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- HTML PROJECT -->
+  <tr id="htmlproj">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" alt="HTML Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>HTML Website</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">Interactive Interface Development</div>
+          <div class="project-bullet">DOM manipulation powers game UI and controls</div>
+          <div class="project-bullet">Event handlers trigger actions like button clicks</div>
+          <div class="project-bullet">CSS animations create visual feedback for user interactions</div>
+          <div class="project-bullet">JavaScript logic manages state like game mechanics</div>
+          <a href="html_project_page.html" class="project-link">View Full HTML Project →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- LINUX PROJECT -->
+  <tr id="linux">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Project">
+          <div class="project-overlay">
+            <font face="Verdana" size="4" color="white"><strong>Linux / Unix Administration</strong></font>
+          </div>
+        </div>
+        <div class="project-content-text">
+          <div class="project-title">System Operations & Service Management</div>
+          <div class="project-bullet">Command execution mirrors game action mechanics</div>
+          <div class="project-bullet">File system navigation like exploring game nodes</div>
+          <div class="project-bullet">Service control (systemctl) manages running processes</div>
+          <div class="project-bullet">Log analysis tracks system events in real-time</div>
+          <a href="linux_resume_project_page.html" class="project-link">View Full Linux Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+
+</table>
+</div>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" autoplay loop muted>
+  <source src="music loop.mp3" type="audio/mpeg">
+</audio>
+
+<!-- FLOATING RESUME BUTTON -->
+<button id="resumeBtn" onclick="location.href='Resume_Page.html'">📄 View Resume</button>
+
+<!-- FLOATING AUDIO BUTTON -->
+<button id="audioToggle" onclick="toggleAudio()">🎵 Play Music</button>
+
+<script>
+  const audio = document.getElementById('bgMusic');
+  const btn = document.getElementById('audioToggle');
+
+  function toggleAudio() {
+    if (audio.muted) {
+      audio.muted = false;
+      audio.play();
+      btn.innerText = "🔇 Mute Music";
+    } else {
+      audio.muted = true;
+      btn.innerText = "🎵 Play Music";
+    }
+  }
+
+  // Ansible Playbook Slider
+  const slider = document.getElementById('ansibleSlider');
+  const output = document.getElementById('ansibleOutput');
+  let hasRun = false;
+
+  if (slider && output) {
+    slider.addEventListener('input', function() {
+      const value = this.value;
+      this.style.background = `linear-gradient(to right, #00bcd4 ${value}%, rgba(0, 188, 212, 0.3) ${value}%)`;
+      
+      if (value >= 95 && !hasRun) {
+        hasRun = true;
+        runAnsiblePlaybook();
+      } else if (value < 95) {
+        hasRun = false;
+        output.textContent = '';
+      }
+    });
+  }
+
+  function runAnsiblePlaybook() {
+    const outputLines = [
+      'Using /etc/ansible/ansible.cfg as config file',
+      '',
+      'PLAY [Game Server Configuration] ******************************************',
+      '',
+      'TASK [Gathering Facts] *****************************************************',
+      'ok: [game-server-01]',
+      'ok: [game-server-02]',
+      'ok: [game-server-03]',
+      '',
+      'TASK [Install required packages] *******************************************',
+      'changed: [game-server-01] => {"changed": true, "msg": "Successfully installed nginx, nodejs"}',
+      'changed: [game-server-02] => {"changed": true, "msg": "Successfully installed nginx, nodejs"}',
+      'changed: [game-server-03] => {"changed": true, "msg": "Successfully installed nginx, nodejs"}',
+      '',
+      'TASK [Deploy game configuration files] *************************************',
+      'changed: [game-server-01] => {"changed": true, "dest": "/etc/game/config.yml"}',
+      'changed: [game-server-02] => {"changed": true, "dest": "/etc/game/config.yml"}',
+      'changed: [game-server-03] => {"changed": true, "dest": "/etc/game/config.yml"}',
+      '',
+      'TASK [Start game services] *************************************************',
+      'changed: [game-server-01] => {"changed": true, "name": "game-engine", "state": "started"}',
+      'changed: [game-server-02] => {"changed": true, "name": "game-engine", "state": "started"}',
+      'changed: [game-server-03] => {"changed": true, "name": "game-engine", "state": "started"}',
+      '',
+      'TASK [Verify game server status] *******************************************',
+      'ok: [game-server-01] => {"status": "running", "uptime": "2s"}',
+      'ok: [game-server-02] => {"status": "running", "uptime": "2s"}',
+      'ok: [game-server-03] => {"status": "running", "uptime": "2s"}',
+      '',
+      'PLAY RECAP *****************************************************************',
+      'game-server-01 : ok=5    changed=3    unreachable=0    failed=0    skipped=0',
+      'game-server-02 : ok=5    changed=3    unreachable=0    failed=0    skipped=0',
+      'game-server-03 : ok=5    changed=3    unreachable=0    failed=0    skipped=0',
+      '',
+      '✓ Playbook execution completed successfully in 12.4s'
+    ];
+
+    let i = 0;
+    output.textContent = '';
+    
+    const interval = setInterval(() => {
+      if (i < outputLines.length) {
+        output.textContent += outputLines[i] + '\n';
+        output.scrollTop = output.scrollHeight;
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+  }
+
+  // Splunk Slot Machine
+  const leverHandle = document.getElementById('leverHandle');
+  const splunkOutput = document.getElementById('splunkOutput');
+  const reel1 = document.getElementById('reel1');
+  const reel2 = document.getElementById('reel2');
+  const reel3 = document.getElementById('reel3');
+  let isSpinning = false;
+
+  if (leverHandle && splunkOutput && reel1 && reel2 && reel3) {
+    leverHandle.addEventListener('click', function() {
+      if (isSpinning) return;
+      isSpinning = true;
+      
+      // Pull lever animation
+      this.style.transform = 'translateY(40px)';
+      setTimeout(() => {
+        this.style.transform = 'translateY(0)';
+      }, 300);
+      
+      // Spin the reels
+      const symbols = ['📊', '🔍', '⚡', '📈', '🎯', '💾', '🔧', '⚙️'];
+      let spins = 0;
+      const maxSpins = 20;
+      
+      const spinInterval = setInterval(() => {
+        reel1.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        reel2.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        reel3.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        spins++;
+        
+        if (spins >= maxSpins) {
+          clearInterval(spinInterval);
+          reel1.textContent = '📊';
+          reel2.textContent = '📈';
+          reel3.textContent = '⚡';
+          
+          setTimeout(() => {
+            runSplunkQuery();
+            isSpinning = false;
+          }, 500);
+        }
+      }, 100);
+    });
+  }
+
+  function runSplunkQuery() {
+    const outputLines = [
+      'Executing SPL query...',
+      '',
+      'index=network | timechart avg(latency) by host',
+      '',
+      '_time                host           avg(latency)',
+      '─────────────────────────────────────────────────',
+      '2026-01-20 14:30:00  web-server-01  45.2ms',
+      '2026-01-20 14:30:00  web-server-02  38.7ms',
+      '2026-01-20 14:30:00  web-server-03  52.1ms',
+      '',
+      '2026-01-20 14:31:00  web-server-01  43.8ms',
+      '2026-01-20 14:31:00  web-server-02  41.2ms',
+      '2026-01-20 14:31:00  web-server-03  49.5ms',
+      '',
+      '2026-01-20 14:32:00  web-server-01  46.3ms',
+      '2026-01-20 14:32:00  web-server-02  39.9ms',
+      '2026-01-20 14:32:00  web-server-03  51.7ms',
+      '',
+      '✓ Query returned 9 events in 0.847 seconds',
+      '✓ Average latency: 45.4ms across all hosts'
+    ];
+
+    let i = 0;
+    splunkOutput.textContent = '';
+    
+    const interval = setInterval(() => {
+      if (i < outputLines.length) {
+        splunkOutput.textContent += outputLines[i] + '\n';
+        splunkOutput.scrollTop = splunkOutput.scrollHeight;
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+  }
+</script>
+
+</body>
+</html>

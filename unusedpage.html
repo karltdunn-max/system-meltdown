@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>The System That Saves You – Holy Grail Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+    :root {
+        --bg: #020617;
+        --gold: #facc15;
+        --gold-soft: #fbbf24;
+        --neon-pink: #fb37ff;
+        --neon-blue: #38bdf8;
+        --neon-green: #4ade80;
+        --text-main: #e5e7eb;
+        --text-soft: #9ca3af;
+        --danger: #f97373;
+        --accent: #f97316;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+            radial-gradient(circle at 10% 0%, #1d2a5f55 0, transparent 55%),
+            radial-gradient(circle at 90% 0%, #ff4b9f33 0, transparent 55%),
+            radial-gradient(circle at 50% 100%, #4bffdf22 0, transparent 60%),
+            #020617;
+        color: var(--text-main);
+        overflow-x: hidden;
+    }
+
+    /* Background aura + grid */
+    .aura {
+        position: fixed;
+        inset: -20%;
+        background:
+            radial-gradient(circle at 50% 0%, rgba(250,204,21,0.25) 0, transparent 55%),
+            radial-gradient(circle at 50% 100%, rgba(56,189,248,0.25) 0, transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.9;
+        pointer-events: none;
+        z-index: -2;
+        animation: auraShift 18s ease-in-out infinite alternate;
+    }
+    @keyframes auraShift {
+        0% { filter: hue-rotate(0deg) brightness(1); }
+        100% { filter: hue-rotate(40deg) brightness(1.3); }
+    }
+
+    .grid-overlay {
+        position: fixed;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: -3;
+    }
+
+    /* Flying sparkles */
+    .spark {
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 0 12px #ffffff;
+        opacity: 0.7;
+        animation: sparkDrift linear infinite;
+        pointer-events: none;
+        z-index: -1;
+    }
+    @keyframes sparkDrift {
+        0% { transform: translateY(110vh) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        100% { transform: translateY(-20vh) translateX(40px); opacity: 0; }
+    }
+
+    header {
+        padding: 1.2rem 2rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.75rem;
+        color: var(--text-soft);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .brand-mark {
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0%, #ffffff 0, #facc15 40%, #b45309 80%);
+        box-shadow:
+            0 0 12px rgba(250,204,21,0.9),
+            0 0 26px rgba(234,179,8,0.7);
+    }
+
+    .nav-pill {
+        padding: 0.25rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148,163,184,0.5);
+        background: rgba(15,23,42,0.8);
+    }
+
+    main {
+        padding: 1.5rem 2rem 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* HERO SECTION */
+    .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 2.5rem;
+        align-items: center;
+        margin-top: 1.5rem;
+    }
+
+    .hero-pre {
+        font-size: 0.8rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+        margin-bottom: 0.7rem;
+    }
+
+    .hero-title {
+        font-size: 2.6rem;
+        line-height: 1.1;
+        font-weight: 800;
+        text-transform: uppercase;
+        background: linear-gradient(120deg, #facc15, #f97316, #fb37ff, #38bdf8, #facc15);
+        -webkit-background-clip: text;
+        color: transparent;
+        animation: titleShimmer 6s linear infinite;
+        filter: drop-shadow(0 0 18px rgba(248,250,252,0.7));
+    }
+
+    @keyframes titleShimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    .hero-sub {
+        margin-top: 0.9rem;
+        font-size: 1rem;
+        color: var(--text-main);
+        max-width: 32rem;
+    }
+
+    .hero-sub strong {
+        color: var(--gold-soft);
+        font-weight: 600;
+    }
+
+    .hero-tagline {
+        margin-top: 1.2rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--text-soft);
+    }
+
+    .hero-tagline span {
+        color: var(--neon-blue);
+    }
+
+    .cta-row {
+        margin-top: 1.6rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .cta-main {
+        position: relative;
+        padding: 0.9rem 1.8rem;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #020617;
+        background: radial-gradient(circle at 20% 0%, #ffffff 0, #facc15 40%, #f97316 80%);
+        box-shadow:
+            0 0 18px rgba(250,204,21,0.9),
+            0 0 40px rgba(234,179,8,0.7);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        overflow: hidden;
+    }
+
+    .cta-main::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.7) 40%, transparent 80%);
+        transform: translateX(-120%);
+        animation: sweep 3.5s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes sweep {
+        0% { transform: translateX(-120%); }
+        40% { transform: translateX(120%); }
+        100% { transform: translateX(120%); }
+    }
+
+    .cta-secondary {
+        font-size: 0.8rem;
+        color: var(--text-soft);
+    }
+
+    .cta-secondary strong {
+        color: var(--danger);
+    }
+
+    /* URGENCY BAR */
+    .urgency {
+        margin-top: 2rem;
+        padding: 0.8rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(248,113,113,0.7);
+        background: radial-gradient(circle at 0% 50%, rgba(248,113,113,0.25) 0, rgba(15,23,42,0.95) 55%);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .urgency-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #f97373;
+        box-shadow: 0 0 12px #f97373;
+        animation: pulseDot 1s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+        0%,100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.5); opacity: 0.4; }
+    }
+
+    .urgency-label {
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--danger);
+        font-weight: 700;
+    }
+
+    .urgency-timer {
+        margin-left: auto;
+        font-family: "SF Mono", ui-monospace, monospace;
+        color: var(--text-main);
+    }
+
+    /* HERO RIGHT – GURU CARD */
+    .guru-card-wrap {
+        position: relative;
+    }
+
+    .halo {
+        position: absolute;
+        inset: -20%;
+        background:
+            radial-gradient(circle at 50% 0%, rgba(250,204,21,0.4) 0, transparent 55%),
+            radial-gradient(circle at 50% 100%, rgba(56,189,248,0.4) 0, transparent 60%);
+        filter: blur(6px);
+        opacity: 0.9;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .guru-card {
+        position: relative;
+        border-radius: 24px;
+        padding: 1.4rem 1.2rem 1.3rem;
+        background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
+        border: 1px solid rgba(148,163,184,0.7);
+        box-shadow:
+            0 0 26px rgba(15,23,42,0.9),
+            0 0 40px rgba(250,204,21,0.4);
+        overflow: hidden;
+    }
+
+    .guru-stage {
+        height: 180px;
+        border-radius: 18px;
+        background:
+            radial-gradient(circle at 50% 0%, rgba(250,250,250,0.9) 0, transparent 55%),
+            radial-gradient(circle at 50% 80%, rgba(56,189,248,0.5) 0, transparent 60%),
+            radial-gradient(circle at 0% 50%, rgba(251,55,255,0.4) 0, transparent 60%),
+            radial-gradient(circle at 100% 50%, rgba(74,222,128,0.4) 0, transparent 60%),
+            #020617;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .guru-silhouette {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 150px;
+        background: linear-gradient(180deg, #020617 0, #000 60%, #020617 100%);
+        clip-path: polygon(50% 0, 70% 18%, 80% 40%, 82% 60%, 78% 100%, 22% 100%, 18% 60%, 20% 40%, 30% 18%);
+        box-shadow: 0 0 26px rgba(15,23,42,1);
+    }
+
+    .guru-beam {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 220px;
+        height: 220px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.9) 0, transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.8;
+        animation: beamPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes beamPulse {
+        0%,100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+        50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+    }
+
+    .crowd-glow {
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: radial-gradient(circle at 50% 0%, rgba(15,23,42,0.9) 0, transparent 70%);
+        opacity: 0.9;
+    }
+
+    .guru-label {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+    }
+
+    .guru-name {
+        margin-top: 0.3rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .guru-name span {
+        color: var(--gold-soft);
+    }
+
+    .guru-quote {
+        margin-top: 0.7rem;
+        font-size: 0.85rem;
+        color: var(--text-main);
+    }
+
+    .guru-quote strong {
+        color: var(--neon-blue);
+    }
+
+    .guru-footer {
+        margin-top: 0.9rem;
+        font-size: 0.75rem;
+        color: var(--text-soft);
+    }
+
+    /* SECTION: WHY THIS SYSTEM */
+    .section {
+        margin-top: 3rem;
+    }
+
+    .section-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+        margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+    }
+
+    .section-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .pill {
+        padding: 0.9rem 1rem;
+        border-radius: 16px;
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(148,163,184,0.6);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+
+    .pill strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: var(--gold-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.75rem;
+    }
+
+    /* FINAL CTA */
+    .final-cta {
+        margin-top: 3rem;
+        text-align: center;
+    }
+
+    .final-line {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .final-line strong {
+        color: var(--gold-soft);
+    }
+
+    .final-cta a {
+        margin-top: 0.5rem;
+    }
+
+    @media (max-width: 900px) {
+        main {
+            padding: 1.2rem 1.2rem 2.5rem;
+        }
+        .hero {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .guru-card-wrap {
+            order: -1;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="aura"></div>
+<div class="grid-overlay"></div>
+
+<header>
+    <div class="brand">
+        <div class="brand-mark"></div>
+        <div>HOLY GRAIL PERFORMANCE SYSTEM</div>
+    </div>
+    <div class="nav-pill">LIVE EVENT • HIGH IMPACT • NO EXCUSES</div>
+</header>
+
+<main>
+    <section class="hero">
+        <div>
+            <div class="hero-pre">WHEN YOUR LIFE AND SYSTEMS ARE MELTING DOWN</div>
+            <h1 class="hero-title">
+                THE COACH. THE STAGE.  
+                THE SYSTEM THAT SAVES YOU.
+            </h1>
+            <p class="hero-sub">
+                This isn’t another feel‑good seminar.  
+                This is a <strong>full‑scale reboot</strong> of how you handle pressure, chaos, and failure.  
+                When everything is on fire, you don’t need motivation — you need a <strong>system</strong>.
+            </p>
+            <div class="hero-tagline">
+                “<span>I don’t just fix problems — I make them vanish in a burst of electric glow.</span>”
+            </div>
+
+            <div class="cta-row">
+                <a class="cta-main" href="https://karltdunn-max.github.io/system-meltdown/" target="_blank" rel="noopener">
+                    ENTER THE MELTDOWN SYSTEM
+                    <span>→</span>
+                </a>
+                <div class="cta-secondary">
+                    <strong>Warning:</strong> Once you see how this system handles chaos,  
+                    you’ll never look at “just fixing problems” the same way again.
+                </div>
+            </div>
+
+            <div class="urgency">
+                <div class="urgency-dot"></div>
+                <div class="urgency-label">REALITY CHECK</div>
+                <div class="urgency-text">
+                    Your uptime, your reputation, your future — they all melt at the speed of your worst incident.
+                </div>
+                <div class="urgency-timer" id="urgencyTimer">00:59</div>
+            </div>
+        </div>
+
+        <div class="guru-card-wrap">
+            <div class="halo"></div>
+            <div class="guru-card">
+                <div class="guru-stage">
+                    <div class="guru-beam"></div>
+                    <div class="guru-silhouette"></div>
+                    <div class="crowd-glow"></div>
+                </div>
+                <div class="guru-label">HIGH‑PERFORMANCE COACH • SYSTEMS MINDSET • NO‑EXCUSE ENERGY</div>
+                <div class="guru-name">
+                    THE <span>ARCHITECT</span> OF CONTROLLED CHAOS
+                </div>
+                <div class="guru-quote">
+                    “You don’t rise to the level of your goals.  
+                    You fall to the level of your <strong>systems</strong>.  
+                    This meltdown engine is how you stop falling.”
+                </div>
+                <div class="guru-footer">
+                    He doesn’t sell hope. He sells <strong>repeatable outcomes</strong> under maximum pressure.  
+                    The meltdown system is the tool he’d bet his name on.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-label">WHY THIS SYSTEM IS DIFFERENT</div>
+        <div class="section-title">Most People Wait for the Fire. You Build the Firebreak.</div>
+        <div class="section-grid">
+            <div class="pill">
+                <strong>FROM MOTIVATION TO MECHANISM</strong>
+                Motivation fades the second the incident bridge opens.  
+                This system is built like an SRE runbook for your life:  
+                triggers, responses, escalation paths, and clear “done” states.
+            </div>
+            <div class="pill">
+                <strong>FROM PANIC TO PROTOCOL</strong>
+                When everything melts down, your nervous system wants to run.  
+                This framework trains you to step forward, claim command,  
+                and execute under pressure like it’s just another drill.
+            </div>
+            <div class="pill">
+                <strong>FROM FIXING TO REWRITING REALITY</strong>
+                You don’t just patch problems.  
+                You redesign the environment so that the same failure  
+                can’t hurt you twice — in systems, in teams, in yourself.
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-label">WHAT YOU’RE WALKING INTO</div>
+        <div class="section-title">The Meltdown System Is Not Optional. It’s Inevitable.</div>
+        <div class="section-grid">
+            <div class="pill">
+                <strong>LIVE INCIDENT MINDSET</strong>
+                Think like Incident Command:  
+                define reality fast, assign roles, cut noise,  
+                and move the system toward stability with ruthless clarity.
+            </div>
+            <div class="pill">
+                <strong>VISUAL WAR ROOM</strong>
+                The linked page isn’t a brochure — it’s a simulation.  
+                Metrics, logs, heatmaps, bridge chat, runbooks.  
+                It shows exactly how you operate when the world tilts.
+            </div>
+            <div class="pill">
+                <strong>PROOF OF POWER</strong>
+                Anyone can say “I stay calm under pressure.”  
+                You’re about to show it — visually, cinematically, undeniably —  
+                in a way no recruiter or leader forgets.
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <p class="final-line">
+            If your life, your systems, or your career ever feel one incident away from collapse,  
+            <strong>you don’t need another speech — you need this system.</strong>
+        </p>
+        <a class="cta-main" href="https://karltdunn-max.github.io/system-meltdown/" target="_blank" rel="noopener">
+            STEP INTO THE MELTDOWN WAR ROOM
+            <span>→</span>
+        </a>
+    </section>
+</main>
+
+<script>
+/* Simple countdown for urgency bar (visual only) */
+let seconds = 59;
+const timerEl = document.getElementById("urgencyTimer");
+setInterval(() => {
+    seconds = (seconds - 1 + 60) % 60;
+    const s = seconds.toString().padStart(2, "0");
+    timerEl.textContent = "00:" + s;
+}, 1000);
+
+/* Sparkles */
+for (let i = 0; i < 40; i++) {
+    const s = document.createElement("div");
+    s.className = "spark";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = 10 + Math.random() * 16 + "s";
+    s.style.animationDelay = Math.random() * 10 + "s";
+    document.body.appendChild(s);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Infrastructure Initiative – Tech Crossword</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Consolas, monospace;
+        background: #050816;
+        color: #e0f7ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 10px;
+    }
+
+    h1 {
+        color: #00eaff;
+        text-shadow: 0 0 10px #00eaff;
+        margin-bottom: 10px;
+    }
+
+    .puzzle-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .grid-container {
+        background: #0b1220;
+        border-radius: 10px;
+        border: 1px solid #00aaff;
+        box-shadow: 0 0 12px #003344;
+        padding: 15px;
+    }
+
+    table.crossword-grid {
+        border-collapse: collapse;
+    }
+
+    td.cell {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #00aaff;
+        text-align: center;
+        vertical-align: middle;
+        background: #050816;
+        position: relative;
+    }
+
+    td.empty {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #050816;
+    }
+
+    td.cell input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        color: #e0f7ff;
+        text-align: center;
+        font-size: 18px;
+        text-transform: uppercase;
+    }
+
+    td.cell input:focus {
+        outline: none;
+        background: #00233a;
+    }
+
+    .cell-number {
+        position: absolute;
+        top: 2px;
+        left: 3px;
+        font-size: 10px;
+        color: #00eaff;
+        pointer-events: none;
+    }
+
+    .clues {
+        max-width: 360px;
+        background: #0b1220;
+        border-radius: 10px;
+        border: 1px solid #00aaff;
+        box-shadow: 0 0 12px #003344;
+        padding: 15px 20px;
+        font-size: 14px;
+    }
+
+    .clues h2 {
+        margin-top: 0;
+        color: #00d4ff;
+        text-shadow: 0 0 8px #00d4ff;
+    }
+
+    .clues ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .clues li {
+        margin-bottom: 6px;
+    }
+
+    .controls {
+        margin-top: 15px;
+    }
+
+    .controls button {
+        background: #001a2d;
+        color: #00eaff;
+        border: 1px solid #00eaff;
+        border-radius: 6px;
+        padding: 10px 18px;
+        margin-right: 10px;
+        cursor: pointer;
+        text-shadow: 0 0 6px #00eaff;
+        box-shadow: 0 0 10px #003344;
+        transition: 0.2s ease-in-out;
+    }
+
+    .controls button:hover {
+        background: #003355;
+        box-shadow: 0 0 16px #00eaff;
+        transform: translateY(-2px);
+    }
+
+    .note {
+        margin-top: 10px;
+        font-size: 12px;
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
+
+<h1>Infrastructure Initiative – Tech Crossword</h1>
+
+<div class="puzzle-wrapper">
+    <div class="grid-container">
+        <!-- 7x7 compact grid, only active cells visible -->
+        <table class="crossword-grid" id="playGrid">
+            <!-- Row 1 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (S) -->
+                <td class="cell">
+                    <div class="cell-number">4</div>
+                    <input maxlength="1" data-solution="S">
+                </td>
+                <!-- 1 Across DOCKER (D) -->
+                <td class="cell">
+                    <div class="cell-number">1</div>
+                    <input maxlength="1" data-solution="D">
+                </td>
+                <td class="cell"><input maxlength="1" data-solution="O"></td>
+                <td class="cell"><input maxlength="1" data-solution="C"></td>
+                <td class="cell"><input maxlength="1" data-solution="K"></td>
+                <td class="cell"><input maxlength="1" data-solution="E"></td>
+                <td class="cell"><input maxlength="1" data-solution="R"></td>
+            </tr>
+            <!-- Row 2 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (P) -->
+                <td class="cell"><input maxlength="1" data-solution="P"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (O) -->
+                <td class="cell">
+                    <div class="cell-number">5</div>
+                    <input maxlength="1" data-solution="O">
+                </td>
+                <!-- 2 Across LINUX (L) -->
+                <td class="cell">
+                    <div class="cell-number">2</div>
+                    <input maxlength="1" data-solution="L">
+                </td>
+                <td class="cell"><input maxlength="1" data-solution="I"></td>
+                <td class="cell"><input maxlength="1" data-solution="N"></td>
+                <td class="cell"><input maxlength="1" data-solution="U"></td>
+            </tr>
+            <!-- Row 3 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (L) -->
+                <td class="cell"><input maxlength="1" data-solution="L"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (R) -->
+                <td class="cell"><input maxlength="1" data-solution="R"></td>
+                <!-- 2 Across LINUX (X) -->
+                <td class="cell"><input maxlength="1" data-solution="X"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (H) -->
+                <td class="cell">
+                    <div class="cell-number">6</div>
+                    <input maxlength="1" data-solution="H">
+                </td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Row 4 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (U) -->
+                <td class="cell"><input maxlength="1" data-solution="U"></td>
+                <!-- 3 Across ANSIBLE (A) -->
+                <td class="cell">
+                    <div class="cell-number">3</div>
+                    <input maxlength="1" data-solution="A">
+                </td>
+                <td class="cell"><input maxlength="1" data-solution="N"></td>
+                <td class="cell"><input maxlength="1" data-solution="S"></td>
+                <td class="cell"><input maxlength="1" data-solution="I"></td>
+                <td class="cell"><input maxlength="1" data-solution="B"></td>
+                <td class="cell"><input maxlength="1" data-solution="L"></td>
+            </tr>
+            <!-- Row 5 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (N) -->
+                <td class="cell"><input maxlength="1" data-solution="N"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (A) -->
+                <td class="cell"><input maxlength="1" data-solution="A"></td>
+                <!-- 3 Across ANSIBLE (E) -->
+                <td class="cell"><input maxlength="1" data-solution="E"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (A) -->
+                <td class="cell"><input maxlength="1" data-solution="A"></td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Row 6 -->
+            <tr>
+                <td class="empty"></td>
+                <!-- 4 Down SPLUNK (K) -->
+                <td class="cell"><input maxlength="1" data-solution="K"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (C) -->
+                <td class="cell"><input maxlength="1" data-solution="C"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (D) -->
+                <td class="cell"><input maxlength="1" data-solution="D"></td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Row 7 -->
+            <tr>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (L) -->
+                <td class="cell"><input maxlength="1" data-solution="L"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (O) -->
+                <td class="cell"><input maxlength="1" data-solution="O"></td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Row 8 -->
+            <tr>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 5 Down ORACLE (E) -->
+                <td class="cell"><input maxlength="1" data-solution="E"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (O) -->
+                <td class="cell"><input maxlength="1" data-solution="O"></td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Row 9 -->
+            <tr>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+                <!-- 6 Down HADOOP (P) -->
+                <td class="cell"><input maxlength="1" data-solution="P"></td>
+                <td class="empty"></td>
+            </tr>
+        </table>
+
+        <div class="controls">
+            <button id="revealBtn">Reveal Solution</button>
+            <button id="clearBtn">Clear</button>
+        </div>
+        <div class="note">
+            Only active cells are shown; unused grid squares blend into the background.
+        </div>
+    </div>
+
+    <div class="clues">
+        <h2>Clues</h2>
+        <strong>Across</strong>
+        <ul>
+            <li><strong>1.</strong> Platform for building, shipping, and running containers.</li>
+            <li><strong>2.</strong> Popular open-source operating system.</li>
+            <li><strong>3.</strong> Agentless automation tool for configuration management and deployments.</li>
+        </ul>
+        <strong>Down</strong>
+        <ul>
+            <li><strong>4.</strong> Log management and analysis platform.</li>
+            <li><strong>5.</strong> Widely used relational database from Oracle Corporation.</li>
+            <li><strong>6.</strong> Distributed framework for large-scale data processing.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+const revealBtn = document.getElementById('revealBtn');
+const clearBtn = document.getElementById('clearBtn');
+const inputs = document.querySelectorAll('#playGrid input');
+
+revealBtn.addEventListener('click', () => {
+    inputs.forEach(input => {
+        const sol = input.dataset.solution;
+        if (sol) {
+            input.value = sol;
+            input.style.color = '#00ff99';
+        }
+    });
+});
+
+clearBtn.addEventListener('click', () => {
+    inputs.forEach(input => {
+        input.value = '';
+        input.style.color = '#e0f7ff';
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Crossword Generator – Infrastructure Initiative</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Consolas, monospace;
+        background: #050816;
+        color: #e0f7ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 10px;
+    }
+
+    h1 {
+        color: #00eaff;
+        text-shadow: 0 0 10px #00eaff;
+        margin-bottom: 10px;
+    }
+
+    .input-panel, .clues, .controls {
+        max-width: 900px;
+        width: 100%;
+        margin-bottom: 20px;
+        background: #0b1220;
+        border-radius: 10px;
+        border: 1px solid #00aaff;
+        box-shadow: 0 0 12px #003344;
+        padding: 15px 20px;
+    }
+
+    .input-panel textarea {
+        width: 100%;
+        height: 80px;
+        background: #050816;
+        color: #e0f7ff;
+        border: 1px solid #00aaff;
+        border-radius: 6px;
+        padding: 8px;
+        resize: vertical;
+    }
+
+    .controls button {
+        background: #001a2d;
+        color: #00eaff;
+        border: 1px solid #00eaff;
+        border-radius: 6px;
+        padding: 10px 18px;
+        margin-right: 10px;
+        cursor: pointer;
+        text-shadow: 0 0 6px #00eaff;
+        box-shadow: 0 0 10px #003344;
+        transition: 0.2s ease-in-out;
+    }
+
+    .controls button:hover {
+        background: #003355;
+        box-shadow: 0 0 16px #00eaff;
+        transform: translateY(-2px);
+    }
+
+    .grid-container {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .crossword-grid {
+        border-collapse: collapse;
+        margin: auto;
+    }
+
+    .crossword-grid td {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #00aaff;
+        text-align: center;
+        vertical-align: middle;
+        background: #050816;
+        position: relative;
+    }
+
+    .crossword-grid td input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        color: #e0f7ff;
+        text-align: center;
+        font-size: 18px;
+        text-transform: uppercase;
+    }
+
+    .crossword-grid td input:focus {
+        outline: none;
+        background: #00233a;
+    }
+
+    .black-cell {
+        background: #02040a;
+        border: 1px solid #00111f;
+    }
+
+    .cell-number {
+        position: absolute;
+        top: 2px;
+        left: 3px;
+        font-size: 10px;
+        color: #00eaff;
+    }
+
+    .clues h2 {
+        margin-top: 0;
+        color: #00d4ff;
+        text-shadow: 0 0 8px #00d4ff;
+    }
+
+    .clues ul {
+        list-style: none;
+        padding-left: 0;
+        font-size: 14px;
+    }
+
+    .clues li {
+        margin-bottom: 4px;
+    }
+
+    .status {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .status.ok {
+        color: #00ff99;
+    }
+
+    .status.error {
+        color: #ff5577;
+    }
+</style>
+</head>
+<body>
+
+<h1>Infrastructure Initiative – Crossword Generator</h1>
+
+<div class="input-panel">
+    <p><strong>Enter your words (comma-separated):</strong></p>
+    <textarea id="wordInput" placeholder="Example: linux, ansible, jenkins, kafka, hadoop"></textarea>
+    <p style="font-size: 12px; opacity: 0.8;">
+        This GitHub-hosted version uses your words to build a simple crossword layout.
+        In a future version, an AI backend can fetch real dictionary definitions as clues.
+    </p>
+</div>
+
+<div class="controls">
+    <button id="generateBtn">Generate Puzzle</button>
+    <button id="checkBtn">Check Answers</button>
+    <button id="revealBtn">Reveal Solution</button>
+</div>
+
+<div class="grid-container">
+    <table id="crosswordGrid" class="crossword-grid"></table>
+</div>
+
+<div class="clues">
+    <h2>Clues</h2>
+    <ul id="clueList"></ul>
+    <div id="status" class="status"></div>
+</div>
+
+<script>
+(function() {
+    const gridSize = 15;
+    let grid = [];
+    let words = [];
+    let placedWords = [];
+
+    const gridElement = document.getElementById('crosswordGrid');
+    const clueList = document.getElementById('clueList');
+    const statusEl = document.getElementById('status');
+
+    function initGrid() {
+        grid = [];
+        for (let r = 0; r < gridSize; r++) {
+            const row = [];
+            for (let c = 0; c < gridSize; c++) {
+                row.push(null);
+            }
+            grid.push(row);
+        }
+    }
+
+    function placeWordsSimple() {
+        placedWords = [];
+        let row = 2;
+        words.forEach((word, index) => {
+            word = word.toUpperCase();
+            if (word.length > gridSize - 2) return;
+            if (row >= gridSize) return;
+            const startCol = 2;
+            for (let i = 0; i < word.length; i++) {
+                grid[row][startCol + i] = {
+                    letter: word[i],
+                    number: index + 1,
+                    across: true
+                };
+            }
+            placedWords.push({
+                word,
+                row,
+                col: startCol,
+                number: index + 1,
+                direction: 'across'
+            });
+            row += 2;
+        });
+    }
+
+    function renderGrid() {
+        gridElement.innerHTML = '';
+        for (let r = 0; r < gridSize; r++) {
+            const tr = document.createElement('tr');
+            for (let c = 0; c < gridSize; c++) {
+                const td = document.createElement('td');
+                const cellData = grid[r][c];
+                if (!cellData) {
+                    td.classList.add('black-cell');
+                } else {
+                    const input = document.createElement('input');
+                    input.maxLength = 1;
+                    input.dataset.row = r;
+                    input.dataset.col = c;
+                    td.appendChild(input);
+
+                    if (cellData.number && c === cellData.colStart) {
+                        const num = document.createElement('div');
+                        num.className = 'cell-number';
+                        num.textContent = cellData.number;
+                        td.appendChild(num);
+                    }
+                }
+                tr.appendChild(td);
+            }
+            gridElement.appendChild(tr);
+        }
+    }
+
+    function renderGridWithNumbers() {
+        gridElement.innerHTML = '';
+        for (let r = 0; r < gridSize; r++) {
+            const tr = document.createElement('tr');
+            for (let c = 0; c < gridSize; c++) {
+                const td = document.createElement('td');
+                const cellData = grid[r][c];
+                if (!cellData) {
+                    td.classList.add('black-cell');
+                } else {
+                    const input = document.createElement('input');
+                    input.maxLength = 1;
+                    input.dataset.row = r;
+                    input.dataset.col = c;
+                    td.appendChild(input);
+
+                    const isStart = isStartOfWord(r, c);
+                    if (isStart) {
+                        const num = document.createElement('div');
+                        num.className = 'cell-number';
+                        num.textContent = isStart;
+                        td.appendChild(num);
+                    }
+                }
+                tr.appendChild(td);
+            }
+            gridElement.appendChild(tr);
+        }
+    }
+
+    function isStartOfWord(r, c) {
+        const cell = grid[r][c];
+        if (!cell) return null;
+
+        let number = null;
+        for (const pw of placedWords) {
+            if (pw.direction === 'across') {
+                if (pw.row === r && pw.col === c) {
+                    number = pw.number;
+                }
+            }
+        }
+        return number;
+    }
+
+    function buildClues() {
+        clueList.innerHTML = '';
+        placedWords.forEach(pw => {
+            const li = document.createElement('li');
+            li.textContent = pw.number + '. ' + pw.word.toLowerCase() + ' – placeholder clue (definition goes here)';
+            clueList.appendChild(li);
+        });
+    }
+
+    function generatePuzzle() {
+        const raw = document.getElementById('wordInput').value;
+        if (!raw.trim()) {
+            statusEl.textContent = 'Enter at least one word.';
+            statusEl.className = 'status error';
+            return;
+        }
+
+        words = raw.split(',').map(w => w.trim()).filter(w => w.length > 0);
+        if (words.length === 0) {
+            statusEl.textContent = 'No valid words found.';
+            statusEl.className = 'status error';
+            return;
+        }
+
+        initGrid();
+        placeWordsSimple();
+        renderGridWithNumbers();
+        buildClues();
+        statusEl.textContent = 'Puzzle generated. (Clues are placeholders – real definitions can be added via AI backend.)';
+        statusEl.className = 'status ok';
+    }
+
+    function revealSolution() {
+        const inputs = gridElement.querySelectorAll('input');
+        inputs.forEach(input => {
+            const r = parseInt(input.dataset.row, 10);
+            const c = parseInt(input.dataset.col, 10);
+            const cell = grid[r][c];
+            if (cell && cell.letter) {
+                input.value = cell.letter;
+                input.style.color = '#00ff99';
+            }
+        });
+        statusEl.textContent = 'Solution revealed.';
+        statusEl.className = 'status ok';
+    }
+
+    function checkAnswers() {
+        let allCorrect = true;
+        const inputs = gridElement.querySelectorAll('input');
+        inputs.forEach(input => {
+            const r = parseInt(input.dataset.row, 10);
+            const c = parseInt(input.dataset.col, 10);
+            const cell = grid[r][c];
+            if (!cell || !cell.letter) return;
+            const val = (input.value || '').toUpperCase();
+            if (!val) {
+                allCorrect = false;
+                input.style.color = '#e0f7ff';
+            } else if (val === cell.letter) {
+                input.style.color = '#00ff99';
+            } else {
+                allCorrect = false;
+                input.style.color = '#ff5577';
+            }
+        });
+
+        if (allCorrect) {
+            statusEl.textContent = 'All answers correct. System stable.';
+            statusEl.className = 'status ok';
+        } else {
+            statusEl.textContent = 'Some answers are incorrect or missing.';
+            statusEl.className = 'status error';
+        }
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', generatePuzzle);
+    document.getElementById('revealBtn').addEventListener('click', revealSolution);
+    document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+
+    initGrid();
+})();
+</script>
+
+</body>
+</html>

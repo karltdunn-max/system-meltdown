@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML, CSS & JavaScript — Infrastructure Initiative</title>
+  <meta name="description" content="How Infrastructure Initiative was engineered using HTML, CSS, and JavaScript — canvas rendering, game loops, collision logic, and UI design.">
+  <meta name="keywords" content="HTML, CSS, JavaScript, Game Development, Canvas, Frontend Engineering">
+  <meta property="og:title" content="HTML, CSS & JavaScript — Infrastructure Initiative">
+  <meta property="og:type" content="website">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Devicon Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top, #102030 0, #050810 55%, #000000 100%);
+      --glass-bg: rgba(10, 20, 40, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --accent: #4af2a1;
+      --text-main: #e6f1ff;
+      --text-muted: #7f8ea3;
+      --neon: #4af2a1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: Consolas, "Courier New", monospace;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Floating neon particles */
+    .particle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: var(--neon);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: floatUp 12s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0.2; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* Infrastructure Initiative intro animation */
+    #intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeOut 3.5s ease forwards;
+    }
+
+    #intro h1 {
+      color: var(--neon);
+      font-size: 2.5rem;
+      letter-spacing: 0.25em;
+      opacity: 0;
+      animation: typeIn 2s steps(20) forwards;
+    }
+
+    @keyframes typeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to right, rgba(5, 10, 25, 0.9), rgba(5, 10, 25, 0.6));
+      border-bottom: 1px solid var(--glass-border);
+      animation: neonBorder 3s infinite alternate;
+    }
+
+    @keyframes neonBorder {
+      from { box-shadow: 0 0 6px var(--neon); }
+      to { box-shadow: 0 0 18px var(--neon); }
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      margin-left: 1.25rem;
+      font-size: 0.9rem;
+      position: relative;
+      padding-bottom: 0.15rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.2s ease-out;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .content {
+      max-width: 900px;
+      width: 100%;
+      padding: 2rem 2.5rem;
+      border-radius: 18px;
+      background: rgba(5, 10, 25, 0.9);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      animation: neonBorder 3s infinite alternate;
+    }
+
+    .content::before {
+      content: "HTML NODE: FRONTEND ENGINE";
+      position: absolute;
+      top: 0.75rem;
+      right: 1.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.6rem;
+      line-height: 1.5;
+    }
+
+    ul {
+      margin-left: 1.2rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .icon-row {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1rem 0 2rem;
+      font-size: 3rem;
+    }
+
+    .icon-row i {
+      transition: transform 0.2s ease;
+    }
+
+    .icon-row i:hover {
+      transform: scale(1.2);
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.1rem 0.25rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      animation: neonBorder 3s infinite alternate;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Infrastructure Initiative Intro Animation -->
+  <div id="intro">
+    <h1>Infrastructure Initiative INITIALIZING...</h1>
+  </div>
+
+  <!-- Floating neon particles -->
+  <script>
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement("div");
+      p.classList.add("particle");
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.animationDelay = Math.random() * 8 + "s";
+      p.style.opacity = Math.random();
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <header>
+    <div class="nav-inner">
+      <div class="brand">RUNBOOK // HTML</div>
+    <nav>
+        <a href="landing_page.html">Home</a>
+        <a href="linux_runbook_page.html">Linux</a>
+        <a href="html_runbook_page.html">HTML</a>
+        <a href="ansible_runbook_page.html">Ansible</a>
+        <a href="hadoop_runbook_page.html">Hadoop</a>
+        <a href="splunk_runbook_page.html">Splunk</a>
+        <a href="remedy_runbook_page.html">Remedy</a>
+        <a href="Change_window_runbook_page.html">Change Window</a>
+		<a href="index_runbook_page.html">Index.html</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="content">
+
+      <h1>HTML, CSS & JavaScript — The Engine Behind Infrastructure Initiative</h1>
+      <p class="subtitle">
+        Infrastructure Initiative isn’t built with a framework or a game engine — it’s engineered from scratch using pure HTML, CSS, and JavaScript working together as a full front‑end stack.
+      </p>
+
+      <div class="icon-row">
+        <i class="devicon-html5-plain colored"></i>
+        <i class="devicon-css3-plain colored"></i>
+        <i class="devicon-javascript-plain colored"></i>
+      </div>
+
+      <h2>HTML — The Structural Backbone</h2>
+      <p>
+        HTML provides the architecture of the entire game.  
+        It defines the <code>&lt;canvas&gt;</code> battlefield, the UI overlays, the score panel, and the event hooks that JavaScript listens to.
+      </p>
+      <ul>
+        <li>The canvas is the rendering surface for all gameplay.</li>
+        <li>UI elements (score, health, warnings) are HTML nodes styled with CSS.</li>
+        <li>Keyboard and mouse events originate from the HTML document.</li>
+      </ul>
+
+      <h2>CSS — The Cinematic Layer</h2>
+      <p>
+        CSS transforms the raw HTML into a neon‑lit, high‑contrast interface.  
+        It controls glow effects, transitions, damage flashes, and the dark‑themed control panel.
+      </p>
+
+      <h2>JavaScript — The Game Engine</h2>
+      <p>
+        JavaScript drives the game loop, physics, collisions, enemy spawning, and difficulty scaling.
+      </p>
+
+      <h2>How Shots Are Created</h2>
+      <p>
+        When the player fires, JavaScript creates a “shot object” with:
+      </p>
+      <ul>
+        <li>starting coordinates</li>
+        <li>velocity</li>
+        <li>direction</li>
+      </ul>
+      <p>
+        Each frame, the shot moves upward and checks for collisions with enemy hitboxes.
+      </p>
+
+      <h2>Enemy Triangles — Built From Geometry</h2>
+      <p>
+        Enemies are drawn as triangles using canvas path commands:
+      </p>
+      <ul>
+        <li>Top point: (x, y)</li>
+        <li>Bottom-left: (x - 15, y + 25)</li>
+        <li>Bottom-right: (x + 15, y + 25)</li>
+      </ul>
+      <p>
+        JavaScript redraws them every frame, creating smooth downward motion.
+      </p>
+
+      <!-- NEW SECTION: HTML FUNCTIONALITY -->
+      <h2>HTML Functionality — The Hidden Power</h2>
+      <p>
+        While JavaScript handles movement and collisions, HTML is responsible for the game’s structure, accessibility, and responsiveness.  
+        It provides the semantic foundation that makes the entire experience stable and scalable.
+      </p>
+      <ul>
+        <li><strong>Canvas Element:</strong> The entire game world is rendered inside a single HTML tag.</li>
+        <li><strong>UI Panels:</strong> Score, health, and warnings are HTML elements layered above the canvas.</li>
+        <li><strong>Event Handling:</strong> HTML captures keyboard and mouse events before JavaScript processes them.</li>
+        <li><strong>Responsive Layout:</strong> HTML ensures the game scales properly on different screen sizes.</li>
+        <li><strong>Document Flow:</strong> The structure allows CSS and JS to interact cleanly and predictably.</li>
+      </ul>
+
+      <h2>Why This Matters</h2>
+      <p>
+        Infrastructure Initiative proves that HTML, CSS, and JavaScript — when used together — can create a fully interactive, animated, responsive game without any external libraries or engines.
+      </p>
+
+    </section>
+  </main>
+
+  <footer>
+    Frontend Engineer · Turning markup, style, and logic into a living game universe
+  </footer>
+
+</body>
+</html>

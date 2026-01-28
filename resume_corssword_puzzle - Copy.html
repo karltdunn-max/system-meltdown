@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Crossword</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  font-family: system-ui, sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
+  margin:0;
+  display:flex;
+  justify-content:center;
+}
+.page { max-width:1000px; width:100%; padding:24px; }
+h1 { text-align:center; color:#fbbf24; }
+
+.layout {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+@media(max-width:900px){ .layout{grid-template-columns:1fr;} }
+
+.card {
+  background:#020617;
+  border:1px solid #1f2937;
+  border-radius:12px;
+  padding:16px;
+}
+
+textarea {
+  width:100%;
+  min-height:200px;
+  background:#020617;
+  color:#e5e7eb;
+  border:1px solid #374151;
+  border-radius:8px;
+  padding:10px;
+}
+
+button {
+  border-radius:999px;
+  padding:8px 16px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+.primary { background:#22c55e; color:#022c22; }
+.secondary { background:#111827; color:#e5e7eb; border:1px solid #374151; }
+
+.toolbar { display:flex; gap:10px; margin-top:10px; }
+
+.grid {
+  border-collapse:collapse;
+  margin:10px auto;
+}
+.grid td {
+  width:32px; height:32px;
+  border:1px solid #1f2937;
+  position:relative;
+  background:#020617;
+}
+.block { background:#020617; border-color:#020617; }
+
+input {
+  width:100%; height:100%;
+  border:none;
+  background:transparent;
+  color:#e5e7eb;
+  text-align:center;
+  font-size:1rem;
+  text-transform:uppercase;
+}
+input:focus { outline:none; background:#0f172a; }
+
+.number {
+  position:absolute;
+  top:2px; left:4px;
+  font-size:0.55rem;
+  color:#9ca3af;
+}
+
+.correct { background:#064e3b; }
+.incorrect { background:#4b1d1d; }
+
+.clues {
+  max-height:260px;
+  overflow:auto;
+  border:1px solid #111827;
+  border-radius:8px;
+  padding:8px;
+  font-size:0.85rem;
+}
+
+.win {
+  display:none;
+  background:#22c55e;
+  color:#022c22;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  font-weight:700;
+  text-align:center;
+}
+.win.show { display:block; }
+</style>
+</head>
+
+<body>
+<div class="page">
+<h1>Resume Crossword Game</h1>
+
+<div class="layout">
+<!-- LEFT -->
+<div class="card">
+<h2>1. Paste Resume</h2>
+<textarea id="resume"></textarea>
+
+<div class="toolbar">
+<button class="primary" onclick="build()">Build Crossword</button>
+<button class="secondary" onclick="demo()">Use Demo Resume</button>
+</div>
+</div>
+
+<!-- RIGHT -->
+<div class="card">
+<h2>2. Solve Crossword</h2>
+<table id="grid" class="grid"></table>
+
+<div class="win" id="win">🏆 You solved the crossword!</div>
+
+<div class="clues">
+<h3>Across</h3>
+<ol id="across"></ol>
+<h3>Down</h3>
+<ol id="down"></ol>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const SIZE = 13;
+let solution = [];
+
+function demo(){
+document.getElementById("resume").value = `
+Senior DevOps Engineer with AWS and Linux experience.
+Built Docker and Kubernetes platforms.
+Automated infrastructure using Terraform.
+Strong Python and JavaScript skills.
+Worked with Hadoop and Spark.
+CI/CD using GitHub Actions.
+Azure hybrid cloud experience.
+Prometheus and Grafana monitoring.
+Security and zero-trust networking.
+Mentored junior engineers.
+`;
+}
+
+function build(){
+const answers = [
+"AWS","LINUX","DOCKER","KUBERNETES","TERRAFORM",
+"PYTHON","JAVASCRIPT","HADOOP","SPARK","AZURE"
+];
+
+const grid = Array.from({length:SIZE},()=>Array(SIZE).fill(""));
+solution = Array.from({length:SIZE},()=>Array(SIZE).fill(""));
+
+const placements = [
+{w:"AWS",r:1,c:1,d:"across"},
+{w:"LINUX",r:3,c:1,d:"across"},
+{w:"DOCKER",r:5,c:1,d:"across"},
+{w:"KUBERNETES",r:7,c:1,d:"across"},
+{w:"TERRAFORM",r:9,c:1,d:"across"},
+{w:"PYTHON",r:1,c:1,d:"down"},
+{w:"JAVASCRIPT",r:1,c:3,d:"down"},
+{w:"HADOOP",r:1,c:5,d:"down"},
+{w:"SPARK",r:1,c:7,d:"down"},
+{w:"AZURE",r:1,c:9,d:"down"},
+];
+
+placements.forEach((p,i)=>{
+for(let k=0;k<p.w.length;k++){
+const r=p.r+(p.d==="down"?k:0);
+const c=p.c+(p.d==="across"?k:0);
+grid[r][c]=p.w[k];
+solution[r][c]=p.w[k];
+}
+});
+
+render(grid, placements);
+}
+
+function render(grid, placements){
+const g=document.getElementById("grid");
+g.innerHTML="";
+document.getElementById("across").innerHTML="";
+document.getElementById("down").innerHTML="";
+document.getElementById("win").classList.remove("show");
+
+let num=1;
+const numbers={};
+
+placements.forEach(p=>{
+numbers[`${p.r},${p.c}`]=num++;
+const li=document.createElement("li");
+li.textContent=`(${p.w.length}) ${p.w}`;
+document.getElementById(p.d).appendChild(li);
+});
+
+for(let r=0;r<SIZE;r++){
+const tr=document.createElement("tr");
+for(let c=0;c<SIZE;c++){
+const td=document.createElement("td");
+if(!grid[r][c]){
+td.className="block";
+}else{
+if(numbers[`${r},${c}`]){
+const n=document.createElement("div");
+n.className="number";
+n.textContent=numbers[`${r},${c}`];
+td.appendChild(n);
+}
+const inp=document.createElement("input");
+inp.maxLength=1;
+inp.oninput=()=>{
+inp.value=inp.value.toUpperCase();
+td.classList.remove("correct","incorrect");
+if(inp.value===solution[r][c]) td.classList.add("correct");
+else td.classList.add("incorrect");
+check();
+};
+td.appendChild(inp);
+}
+tr.appendChild(td);
+}
+g.appendChild(tr);
+}
+}
+
+function check(){
+for(let r=0;r<SIZE;r++){
+for(let c=0;c<SIZE;c++){
+if(solution[r][c]){
+const inp=document.querySelectorAll("tr")[r].children[c].querySelector("input");
+if(!inp || inp.value!==solution[r][c]) return;
+}
+}
+}
+document.getElementById("win").classList.add("show");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Linux Systems Engineering — Karl Dunn</title>
+  <meta name="description" content="Linux systems engineering, file systems, troubleshooting, networking, and how these concepts power the Infrastructure Initiative simulator.">
+  <meta name="keywords" content="Linux, Bash, Unix, File Systems, Networking, DevOps, Automation">
+  <meta property="og:title" content="Linux Systems Engineering — Karl Dunn">
+  <meta property="og:type" content="website">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f1f2f 0, #050810 55%, #000000 100%);
+      font-family: Consolas, "Courier New", monospace;
+      color: #e6f1ff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      backdrop-filter: blur(10px);
+      background: rgba(5, 10, 25, 0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+    }
+    nav a {
+      color: #e6f1ff;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+    .content {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: rgba(5,10,25,0.9);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    h2 { margin-top: 1.5rem; }
+    p, li { font-size: 0.9rem; line-height: 1.5; }
+    code { background: rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+
+<body>
+ <header>
+    <div class="nav-inner">
+      <div class="brand">RUNBOOK // LINUX</div>
+      <nav>
+    <a href="landing_page.html">🌀 Home</a>
+    <a href="linux_runbook_page.html">🐧 Linux</a>
+    <a href="ansible_runbook_page.html">🅰️ Ansible</a>
+    <a href="splunk_runbook_page.html">🔍 Splunk</a>
+    <a href="hadoop_runbook_page.html">🐘 Hadoop</a>
+    <a href="Change_window_runbook_page.html">🔥 Change Window</a>
+      </nav>
+    </div>
+  </header>
+
+<div class="content">
+  <h1>Linux Systems Engineering</h1>
+  <p class="subtitle">
+    The operating system that powers automation, clusters, observability, and the entire logic behind the Infrastructure Initiative simulator.
+  </p>
+
+  <h2>How Linux Powers the Infrastructure Initiative Game</h2>
+  <p>
+    The simulator is built on real Linux concepts:
+  </p>
+  <ul>
+    <li><strong>Targets = system services</strong> (like <code>systemctl restart nginx</code>)</li>
+    <li><strong>Forbidden nodes = protected system files</strong> (like <code>/etc/shadow</code> or <code>/boot</code>)</li>
+    <li><strong>Idempotent hits = safe re‑runs of commands</strong> (like <code>systemctl start</code> on an already running service)</li>
+    <li><strong>Console logs = /var/log/messages</strong> with timestamps and severity</li>
+    <li><strong>Misses = invalid commands or wrong file paths</strong></li>
+  </ul>
+
+  <p>
+    Every mechanic in the game mirrors real Linux operations — the same troubleshooting patterns I use in production.
+  </p>
+
+  <h2>File Systems & Finding Files</h2>
+  <p>
+    Linux file systems are hierarchical and predictable. In the game, “finding the right target” is the same mental model as:
+  </p>
+  <ul>
+    <li><code>find / -name "*.conf"</code></li>
+    <li><code>locate nginx.conf</code></li>
+    <li><code>du -sh /var/log</code> to find large logs</li>
+    <li><code>df -h</code> to check disk usage</li>
+  </ul>
+
+  <p>
+    Clicking the correct node in Infrastructure Initiative is the same as locating the correct file or service in a real outage.
+  </p>
+
+  <h2>Executing Commands & Service Control</h2>
+  <p>
+    The game’s “configure” action is modeled after:
+  </p>
+  <ul>
+    <li><code>systemctl start service</code></li>
+    <li><code>systemctl restart nginx</code></li>
+    <li><code>chmod</code> and <code>chown</code> for permissions</li>
+    <li><code>kill -9</code> for runaway processes</li>
+  </ul>
+
+  <p>
+    If a service is already running, Linux reports <code>ok</code> — just like the game logs an idempotent INFO message.
+  </p>
+
+  <h2>Network Troubleshooting (Mapped to Game Logic)</h2>
+  <p>
+    Network tools are the backbone of diagnosing outages:
+  </p>
+  <ul>
+    <li><code>ping</code> — reachability</li>
+    <li><code>netstat -tulpn</code> — open ports</li>
+    <li><code>ss -lntp</code> — modern socket inspection</li>
+    <li><code>curl -I http://service</code> — HTTP health checks</li>
+    <li><code>traceroute</code> — path debugging</li>
+  </ul>
+
+  <p>
+    In the game, a “miss” is the same as a failed ping or a closed port — wrong target, wrong path, or unreachable service.
+  </p>
+
+  <h2>Logs, Dumps & Diagnostics</h2>
+  <p>
+    The Infrastructure Initiative console is inspired by real Linux logs:
+  </p>
+  <ul>
+    <li><code>/var/log/messages</code></li>
+    <li><code>/var/log/syslog</code></li>
+    <li><code>journalctl -xe</code></li>
+    <li><code>dmesg</code> for kernel events</li>
+  </ul>
+
+  <p>
+    Severity levels (INFO, ERROR, CRITICAL) match real syslog priorities.
+  </p>
+
+  <h2>Secure Copy & Remote Operations</h2>
+  <p>
+    Outages often involve moving logs or configs between servers:
+  </p>
+  <ul>
+    <li><code>scp file user@host:/path</code></li>
+    <li><code>rsync -avz /src /dest</code></li>
+    <li><code>ssh user@server</code> for remote fixes</li>
+  </ul>
+
+  <p>
+    In the game, this maps to “touching the right node” — the same precision required when copying files to the correct directory.
+  </p>
+
+  <h2>Why Linux Is the Heart of the Portfolio</h2>
+  <p>
+    Linux is the foundation of:
+  </p>
+  <ul>
+    <li>Ansible automation</li>
+    <li>Hadoop clusters</li>
+    <li>Splunk indexers</li>
+    <li>Tableau data sources</li>
+    <li>The Infrastructure Initiative simulator</li>
+  </ul>
+
+  <p>
+    Everything in this portfolio — from the outage game to the automation pages — is built on real Linux engineering principles.
+  </p>
+</div>
+</body>
+</html>

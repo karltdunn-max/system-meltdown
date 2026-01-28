@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Systems - Hadoop | Kafka | Zookeeper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Hero Background - Deep Purple/Teal Gradient */
+        .hero {
+            position: relative;
+            min-height: 550px;
+            background: linear-gradient(135deg, #1a1b3a 0%, #16213e 50%, #0f3460 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* Animated Data Nodes */
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00f2ff;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(2); opacity: 0.8; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .tag {
+            background: rgba(0, 242, 255, 0.1);
+            color: #00f2ff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: inline-block;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #00f2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #b0b0b0;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* Project Grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .component-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-10px);
+            border-color: #00f2ff;
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00f2ff;
+        }
+
+        .card-list {
+            list-style: none;
+            color: #b0b0b0;
+            line-height: 1.8;
+        }
+
+        .card-list li::before {
+            content: "▹";
+            color: #00f2ff;
+            margin-right: 10px;
+        }
+
+        /* Live Dashboard Stats */
+        .dashboard-preview {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 60px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .metric-card {
+            padding: 20px;
+            border-right: 1px solid #333;
+        }
+
+        .metric-card:last-child { border-right: none; }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00f2ff;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #777;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-card { border-right: none; border-bottom: 1px solid #333; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="node" style="top:20%; left:10%"></div>
+        <div class="node" style="top:50%; left:25%"></div>
+        <div class="node" style="top:30%; right:15%"></div>
+        <div class="node" style="top:80%; right:40%"></div>
+        
+        <div class="hero-content">
+            <span class="tag">System Engineering & Architecture</span>
+            <h1>Big Data Infrastructure</h1>
+            <p class="subtitle">
+                Designing and managing high-availability distributed systems. Scaling data pipelines with Kafka, ensuring consensus with Zookeeper, and managing petabyte-scale storage on Hadoop.
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="project-grid">
+            <div class="component-card">
+                <span class="icon">🚀</span>
+                <h3>Apache Kafka</h3>
+                <ul class="card-list">
+                    <li>Real-time event streaming</li>
+                    <li>Message retention & replication</li>
+                    <li>Producer/Consumer group tuning</li>
+                    <li>Topic partition optimization</li>
+                </ul>
+            </div>
+
+            <div class="component-card">
+                <span class="icon">🐘</span>
+                <h3>Apache Hadoop</h3>
+                <ul class="card-list">
+                    <li>HDFS Storage Management</li>
+                    <li>NameNode High Availability</li>
+                    <li>YARN Resource Scheduling</li>
+                    <li>MapReduce & Hive Integration</li>
+                </ul>
+            </div>
+
+            <div class="component-card">
+                <span class="icon">🔭</span>
+                <h3>Zookeeper</h3>
+                <ul class="card-list">
+                    <li>Distributed Coordination</li>
+                    <li>Leader Election Logic</li>
+                    <li>Cluster Quorum Maintenance</li>
+                    <li>Configuration Management</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="dashboard-preview">
+            <h2 style="margin-bottom: 30px; font-size: 1.2rem; color: #777;">LIVE CLUSTER HEALTH MONITOR</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">99.98%</div>
+                    <div class="metric-label">Uptime</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">1.2 TB/s</div>
+                    <div class="metric-label">Throughput</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0ms</div>
+                    <div class="metric-label">Kafka Lag</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">124</div>
+                    <div class="metric-label">Active Nodes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<a href="Resume_Page.html#skills-section" class="back-button" style="position: fixed; top: 30px; left: 30px; padding: 15px 30px; background: rgba(0, 242, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid rgba(0, 242, 255, 0.5); border-radius: 50px; color: white; text-decoration: none; font-weight: 600; transition: all 0.3s ease; z-index: 1000;">← Back to Portfolio</a>
+
+</body>
+</html>

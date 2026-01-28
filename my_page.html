@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Ultimate SEV‑1 Incident War Room</title>
+<style>
+    :root {
+        --bg: #020617;
+        --panel: #020817;
+        --panel-alt: #020b1f;
+        --border: #1f2937;
+        --accent-red: #f97373;
+        --accent-amber: #fbbf24;
+        --accent-green: #4ade80;
+        --accent-blue: #38bdf8;
+        --text-main: #e5e7eb;
+        --text-soft: #9ca3af;
+        --text-dim: #6b7280;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background:
+            radial-gradient(circle at 10% 0%, #1d2a5f55 0, transparent 55%),
+            radial-gradient(circle at 90% 0%, #ff4b9f33 0, transparent 55%),
+            radial-gradient(circle at 50% 100%, #4bffdf22 0, transparent 60%),
+            #020617;
+        color: var(--text-main);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Reactor aura */
+    .reactor-aura {
+        position: fixed;
+        inset: -20%;
+        background:
+            radial-gradient(circle at 50% 120%, #0b1120 0, transparent 55%),
+            radial-gradient(circle at 50% -10%, #1d4ed833 0, transparent 60%);
+        mix-blend-mode: screen;
+        opacity: 0.7;
+        pointer-events: none;
+        z-index: -2;
+        animation: auraShift 18s ease-in-out infinite alternate;
+    }
+    @keyframes auraShift {
+        0% { filter: hue-rotate(0deg) brightness(1); }
+        100% { filter: hue-rotate(40deg) brightness(1.3); }
+    }
+
+    /* Flying icons */
+    .fly-icon {
+        position: fixed;
+        font-size: 1.5rem;
+        opacity: 0.7;
+        animation: flyUp linear infinite;
+        pointer-events: none;
+        filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+        z-index: -1;
+    }
+    @keyframes flyUp {
+        0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* SEV-1 banner */
+    .sev-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        padding: 0 1.6rem;
+        background: linear-gradient(90deg, #b91c1c, #f97316);
+        color: #fff;
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        z-index: 20;
+        box-shadow: 0 0 18px rgba(0,0,0,0.8);
+        gap: 0.8rem;
+        animation: sevPulse 1.4s ease-in-out infinite;
+    }
+
+    .sev-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 14px #fff;
+        animation: sevDot 0.9s ease-in-out infinite;
+    }
+
+    .sev-title {
+        font-weight: 700;
+    }
+
+    .sev-sub {
+        margin-left: auto;
+        font-size: 0.7rem;
+        opacity: 0.9;
+    }
+
+    @keyframes sevPulse {
+        0%,100% { filter: brightness(1); }
+        50% { filter: brightness(1.25); }
+    }
+
+    @keyframes sevDot {
+        0%,100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.6); opacity: 0.4; }
+    }
+
+    /* Layout */
+    .grid {
+        position: absolute;
+        top: 46px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: grid;
+        grid-template-columns: 1.1fr 1.2fr 1.1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .panel {
+        background: radial-gradient(circle at top, var(--panel-alt) 0, var(--panel) 55%, #000 100%);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow:
+            0 0 24px rgba(0,0,0,0.9),
+            0 0 40px rgba(56,189,248,0.18);
+        padding: 0.9rem 1rem;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .panel::before {
+        content: "";
+        position: absolute;
+        inset: -40%;
+        background: radial-gradient(circle at top, rgba(59,130,246,0.18) 0, transparent 55%);
+        opacity: 0.6;
+        mix-blend-mode: screen;
+        pointer-events: none;
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.6rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .panel-title {
+        font-size: 0.8rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+    }
+
+    .panel-tag {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        background: rgba(15,23,42,0.8);
+    }
+
+    .panel-body {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* LEFT: metrics / heatmap + melting server */
+    .metric-card {
+        background: rgba(15,23,42,0.9);
+        border-radius: 12px;
+        border: 1px solid rgba(55,65,81,0.9);
+        padding: 0.6rem 0.7rem;
+        font-size: 0.8rem;
+        box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+
+    .metric-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+        color: var(--text-soft);
+    }
+
+    .metric-value {
+        font-weight: 600;
+    }
+
+    .metric-value.bad {
+        color: var(--accent-red);
+    }
+
+    .metric-value.warn {
+        color: var(--accent-amber);
+    }
+
+    .metric-value.good {
+        color: var(--accent-green);
+    }
+
+    .heatmap {
+        margin-top: 0.4rem;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.25rem;
+    }
+
+    .heat-cell {
+        height: 26px;
+        border-radius: 6px;
+        background: #0f172a;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .heat-cell span {
+        position: absolute;
+        inset: 0;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-soft);
+    }
+
+    .heat-cell.hot {
+        background: radial-gradient(circle at top, #b91c1c 0, #7f1d1d 40%, #111827 100%);
+        box-shadow: 0 0 12px rgba(248,113,113,0.7);
+        animation: shardPulse 1.2s ease-in-out infinite;
+    }
+
+    .heat-cell.warm {
+        background: radial-gradient(circle at top, #f97316 0, #92400e 40%, #111827 100%);
+        box-shadow: 0 0 10px rgba(251,146,60,0.6);
+    }
+
+    .heat-cell.cool {
+        background: radial-gradient(circle at top, #22c55e 0, #166534 40%, #111827 100%);
+        box-shadow: 0 0 8px rgba(74,222,128,0.5);
+    }
+
+    @keyframes shardPulse {
+        0%,100% { filter: brightness(1); }
+        50% { filter: brightness(1.4); }
+    }
+
+    .server-stack {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .server {
+        position: relative;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #111827, #020617);
+        border: 1px solid #1f2937;
+        box-shadow: 0 0 10px rgba(15,23,42,0.9);
+        overflow: hidden;
+    }
+
+    .server-label {
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.7rem;
+        color: #e5e7eb;
+    }
+
+    .server-lights {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        gap: 4px;
+    }
+
+    .light {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #4bffdf;
+        box-shadow: 0 0 8px #4bffdf;
+    }
+
+    .light.red {
+        background: #f97373;
+        box-shadow: 0 0 10px #f97373;
+        animation: alertBlink 0.7s ease-in-out infinite;
+    }
+
+    @keyframes alertBlink {
+        0%,100% { opacity: 1; }
+        50% { opacity: 0.2; }
+    }
+
+    .server.melting {
+        background: linear-gradient(135deg, #b91c1c, #f97316);
+        box-shadow:
+            0 0 18px rgba(248,113,113,0.9),
+            0 0 32px rgba(251,146,60,0.7);
+        animation: meltWobble 1.4s ease-in-out infinite;
+    }
+
+    @keyframes meltWobble {
+        0%,100% { transform: translateY(0) skewX(0deg); }
+        50% { transform: translateY(3px) skewX(-3deg); }
+    }
+
+    .melt-drip {
+        position: absolute;
+        left: 50%;
+        bottom: -18px;
+        width: 40px;
+        height: 40px;
+        background: radial-gradient(circle at top, #ffb199 0, #f97316 40%, transparent 70%);
+        transform: translateX(-50%);
+        filter: blur(1px);
+        animation: drip 1.4s ease-in-out infinite;
+        opacity: 0.9;
+    }
+
+    @keyframes drip {
+        0% { transform: translate(-50%, 0) scaleY(0.6); opacity: 0.7; }
+        50% { transform: translate(-50%, 8px) scaleY(1); opacity: 1; }
+        100% { transform: translate(-50%, 16px) scaleY(0.4); opacity: 0; }
+    }
+
+    /* MIDDLE: log stream */
+    .log-stream {
+        flex: 1;
+        background: #020617;
+        border-radius: 12px;
+        border: 1px solid #111827;
+        padding: 0.5rem 0.6rem;
+        font-family: "Consolas", "SF Mono", ui-monospace, monospace;
+        font-size: 0.75rem;
+        color: #9ca3af;
+        overflow-y: auto;
+        box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+
+    .log-line {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 0.1rem;
+    }
+
+    .log-time {
+        color: #6b7280;
+    }
+
+    .log-level {
+        font-weight: 600;
+        margin: 0 0.3rem;
+    }
+
+    .log-level.error {
+        color: var(--accent-red);
+    }
+
+    .log-level.warn {
+        color: var(--accent-amber);
+    }
+
+    .log-level.info {
+        color: var(--accent-blue);
+    }
+
+    .log-msg.impact {
+        color: var(--accent-red);
+    }
+
+    /* RIGHT: bridge + runbook */
+    .bridge {
+        flex: 1;
+        display: grid;
+        grid-template-rows: 1.1fr 1fr;
+        gap: 0.6rem;
+        min-height: 0;
+    }
+
+    .bridge-chat,
+    .runbook {
+        background: rgba(15,23,42,0.9);
+        border-radius: 12px;
+        border: 1px solid rgba(55,65,81,0.9);
+        padding: 0.6rem 0.7rem;
+        font-size: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        box-shadow: 0 0 18px rgba(15,23,42,0.9);
+    }
+
+    .bridge-header,
+    .runbook-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+    }
+
+    .bridge-title,
+    .runbook-title {
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+    }
+
+    .bridge-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.2rem;
+    }
+
+    .chat-line {
+        margin-bottom: 0.35rem;
+    }
+
+    .chat-role {
+        font-weight: 600;
+        color: var(--accent-blue);
+        margin-right: 0.25rem;
+    }
+
+    .chat-role.ic {
+        color: var(--accent-amber);
+    }
+
+    .chat-role.exec {
+        color: var(--accent-red);
+    }
+
+    .chat-text {
+        color: var(--text-main);
+    }
+
+    .runbook-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.2rem;
+        line-height: 1.5;
+    }
+
+    .step {
+        margin-bottom: 0.5rem;
+    }
+
+    .step-label {
+        font-weight: 600;
+        color: var(--accent-blue);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+    }
+
+    .step-text {
+        color: var(--text-main);
+        font-size: 0.8rem;
+    }
+
+    .result-box {
+        margin-top: 0.4rem;
+        padding: 0.5rem 0.6rem;
+        border-radius: 8px;
+        background: rgba(22,163,74,0.12);
+        border: 1px solid rgba(74,222,128,0.6);
+        color: #bbf7d0;
+        font-size: 0.78rem;
+    }
+
+    /* Spotlight on you */
+    .hero-strip {
+        position: fixed;
+        left: 50%;
+        top: 46px;
+        transform: translateX(-50%);
+        padding: 0.35rem 1.2rem;
+        border-radius: 999px;
+        background: radial-gradient(circle at top, rgba(56,189,248,0.4) 0, rgba(15,23,42,0.95) 55%);
+        border: 1px solid rgba(56,189,248,0.7);
+        color: #e5f0ff;
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        box-shadow:
+            0 0 18px rgba(56,189,248,0.7),
+            0 0 40px rgba(15,23,42,0.9);
+        z-index: 19;
+        animation: heroGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes heroGlow {
+        0%,100% { filter: brightness(1); }
+        50% { filter: brightness(1.4); }
+    }
+
+    /* Scrollbars */
+    .log-stream::-webkit-scrollbar,
+    .bridge-body::-webkit-scrollbar,
+    .runbook-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    .log-stream::-webkit-scrollbar-thumb,
+    .bridge-body::-webkit-scrollbar-thumb,
+    .runbook-body::-webkit-scrollbar-thumb {
+        background: #1f2937;
+        border-radius: 999px;
+    }
+
+    @media (max-width: 1100px) {
+        .grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto;
+            overflow-y: auto;
+        }
+        .hero-strip {
+            top: 50px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="reactor-aura"></div>
+
+<div class="sev-banner">
+    <div class="sev-dot"></div>
+    <div class="sev-title">SEV‑1 ACTIVE — CORE TRANSACTION CLUSTER LATENCY > 5s</div>
+    <div class="sev-sub">INCIDENT BRIDGE LIVE • CUSTOMER IMPACT • NO ROOM FOR ERROR</div>
+</div>
+
+<div class="hero-strip">
+    INCIDENT COMMAND • ENGINEER • SYSTEM STABILITY LEAD
+</div>
+
+<div class="grid">
+    <!-- LEFT: METRICS / HEATMAP / MELTING SERVER -->
+    <section class="panel">
+        <div class="panel-header">
+            <div class="panel-title">CORE TRANSACTION CLUSTER – LIVE METRICS</div>
+            <div class="panel-tag">CLUSTER: TX‑PROD‑A</div>
+        </div>
+        <div class="panel-body">
+            <div class="metric-card">
+                <div class="metric-row">
+                    <div class="metric-label">Latency p95</div>
+                    <div class="metric-value bad" id="latencyVal">5.8s (Above SLO)</div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-label">Error Rate</div>
+                    <div class="metric-value bad" id="errorVal">3.2% (Spiking)</div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-label">Queue Depth</div>
+                    <div class="metric-value bad" id="queueVal">High – Backlog Building</div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-label">Impacted Services</div>
+                    <div class="metric-value">Checkout, Payments, API Gateway</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-row">
+                    <div class="metric-label">CPU Utilization</div>
+                    <div class="metric-value warn" id="cpuVal">82%</div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-label">Memory Utilization</div>
+                    <div class="metric-value warn" id="memVal">76%</div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-label">DB Connection Pool</div>
+                    <div class="metric-value bad" id="dbVal">Near Saturation</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-row" style="margin-bottom:0.4rem;">
+                    <div class="metric-label">Shard Heatmap</div>
+                    <div class="metric-value">TX‑NODE‑01 / 02 / 03 / 04</div>
+                </div>
+                <div class="heatmap">
+                    <div class="heat-cell cool"><span>01</span></div>
+                    <div class="heat-cell warm"><span>02</span></div>
+                    <div class="heat-cell hot" id="hotShard"><span>03</span></div>
+                    <div class="heat-cell cool"><span>04</span></div>
+                </div>
+            </div>
+
+            <div class="server-stack">
+                <div class="server">
+                    <div class="server-label">TX‑NODE‑01</div>
+                    <div class="server-lights">
+                        <div class="light"></div>
+                        <div class="light"></div>
+                        <div class="light"></div>
+                    </div>
+                </div>
+                <div class="server">
+                    <div class="server-label">TX‑NODE‑02</div>
+                    <div class="server-lights">
+                        <div class="light"></div>
+                        <div class="light"></div>
+                        <div class="light"></div>
+                    </div>
+                </div>
+                <div class="server melting">
+                    <div class="server-label">TX‑NODE‑03</div>
+                    <div class="server-lights">
+                        <div class="light red"></div>
+                        <div class="light red"></div>
+                        <div class="light red"></div>
+                    </div>
+                    <div class="melt-drip"></div>
+                </div>
+                <div class="server">
+                    <div class="server-label">TX‑NODE‑04</div>
+                    <div class="server-lights">
+                        <div class="light"></div>
+                        <div class="light"></div>
+                        <div class="light"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MIDDLE: LOG STREAM -->
+    <section class="panel">
+        <div class="panel-header">
+            <div class="panel-title">LIVE LOG STREAM – TX‑PROD‑A</div>
+            <div class="panel-tag">SOURCE: APP + GATEWAY + DB</div>
+        </div>
+        <div class="panel-body">
+            <div class="log-stream" id="logStream"></div>
+        </div>
+    </section>
+
+    <!-- RIGHT: BRIDGE + RUNBOOK -->
+    <section class="panel">
+        <div class="panel-header">
+            <div class="panel-title">INCIDENT BRIDGE – COMMAND & RUNBOOK</div>
+            <div class="panel-tag">ROLE: INCIDENT COMMAND</div>
+        </div>
+        <div class="panel-body">
+            <div class="bridge">
+                <div class="bridge-chat">
+                    <div class="bridge-header">
+                        <div class="bridge-title">BRIDGE CHAT – LIVE</div>
+                        <div class="panel-tag">SEV‑1 • CUSTOMER IMPACT</div>
+                    </div>
+                    <div class="bridge-body" id="bridgeChat"></div>
+                </div>
+                <div class="runbook">
+                    <div class="runbook-header">
+                        <div class="runbook-title">RUNBOOK – CORE TRANSACTION LATENCY SPIKE</div>
+                        <div class="panel-tag">OWNER: INCIDENT COMMAND</div>
+                    </div>
+                    <div class="runbook-body">
+                        <div class="step">
+                            <div class="step-label">STEP 1 – STABILIZE THE BRIDGE</div>
+                            <div class="step-text">
+                                Declare SEV‑1. Assign roles (Incident Command, Comms, Scribe, Tech Leads).  
+                                Freeze non‑essential changes. Confirm blast radius and impacted services.
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-label">STEP 2 – TRIAGE & PATTERN MATCH</div>
+                            <div class="step-text">
+                                Correlate logs, metrics, and traces. Identify hot shards, failing dependencies,
+                                and queue depth trends. Confirm whether impact is regional or global.
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-label">STEP 3 – CONTAINMENT PLAN</div>
+                            <div class="step-text">
+                                • Drain traffic from failing node(s).  
+                                • Scale out healthy nodes.  
+                                • Throttle non‑critical batch jobs via feature flags.  
+                                • Apply temporary rate limits to noisy clients.
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-label">STEP 4 – VALIDATE & HOLD</div>
+                            <div class="step-text">
+                                Monitor latency, error rate, and queue depth.  
+                                Keep the bridge open until metrics are stable and customer flows are confirmed healthy.
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-label">STEP 5 – LEARN & HARDEN</div>
+                            <div class="step-text">
+                                Capture a post‑incident review. Update runbooks, add earlier alerts, and propose
+                                architecture changes to remove single‑node bottlenecks.
+                            </div>
+                        </div>
+
+                        <div class="result-box" id="resultBox">
+                            Result: SEV‑1 in progress. Containment plan being executed.  
+                            Target: restore latency under SLO and drain backlog without full outage.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+/* Time helper */
+function nowTime() {
+    const d = new Date();
+    return d.toTimeString().slice(0, 8);
+}
+
+/* Flying icons */
+const flyIconsSet = ["🖥️","🗄️","⚠️","🚨","📟","📡","🔧","🛠️","📊","📁"];
+for (let i = 0; i < 24; i++) {
+    const el = document.createElement("div");
+    el.className = "fly-icon";
+    el.textContent = flyIconsSet[Math.floor(Math.random() * flyIconsSet.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = 8 + Math.random() * 10 + "s";
+    el.style.animationDelay = Math.random() * 8 + "s";
+    document.body.appendChild(el);
+}
+
+/* LOG STREAM */
+const logStream = document.getElementById("logStream");
+const logTemplates = [
+    { level: "INFO", msg: "gateway: received request /checkout tenant=retail-eu" },
+    { level: "INFO", msg: "payments: auth request dispatched provider=stripe region=us-east-1" },
+    { level: "WARN", msg: "tx-node-03: latency above threshold shard=3" },
+    { level: "ERROR", msg: "tx-node-03: timeout calling dependency=payments-db (pool exhausted)" },
+    { level: "WARN", msg: "queue: backlog increasing topic=checkout-events" },
+    { level: "ERROR", msg: "gateway: upstream timeout route=/checkout status=504" },
+    { level: "INFO", msg: "autoscaler: evaluating scale-out policy for tx-cluster" },
+    { level: "WARN", msg: "batch-job: heavy reconciliation job still running in prod" },
+    { level: "INFO", msg: "feature-flag: throttle-batch-job evaluated tenant=all" }
+];
+
+function appendLogLine(template) {
+    const line = document.createElement("div");
+    line.className = "log-line";
+    const levelClass =
+        template.level === "ERROR" ? "error" :
+        template.level === "WARN" ? "warn" : "info";
+
+    line.innerHTML =
+        `<span class="log-time">${nowTime()}</span>` +
+        `<span class="log-level ${levelClass}">[${template.level}]</span>` +
+        `<span class="log-msg ${template.level === "ERROR" ? "impact" : ""}">${template.msg}</span>`;
+
+    logStream.appendChild(line);
+    logStream.scrollTop = logStream.scrollHeight;
+}
+
+setInterval(() => {
+    const t = logTemplates[Math.floor(Math.random() * logTemplates.length)];
+    appendLogLine(t);
+}, 650);
+
+/* BRIDGE CHAT */
+const bridgeChat = document.getElementById("bridgeChat");
+const chatScript = [
+    { role: "IC", cls: "ic", text: "Declaring SEV‑1 for core transaction latency. I own technical direction." },
+    { role: "COMMS", cls: "", text: "Acknowledged. Drafting customer‑facing status page update." },
+    { role: "PAYMENTS LEAD", cls: "", text: "Seeing timeouts from tx-node-03 to payments-db." },
+    { role: "IC", cls: "ic", text: "Drain traffic from tx-node-03. Scale out remaining nodes by +2." },
+    { role: "SRE", cls: "", text: "Autoscaler updated. New nodes coming online in tx-cluster." },
+    { role: "IC", cls: "ic", text: "Throttle non-critical batch job via feature flag. Confirm when applied." },
+    { role: "APP LEAD", cls: "", text: "Feature flag applied. Batch job throttled by 70%." },
+    { role: "IC", cls: "ic", text: "Monitor latency and error rate. Call out when p95 < 1.5s for 5 minutes." },
+    { role: "EXEC", cls: "exec", text: "Keep me posted. Priority is customer impact and stability." },
+    { role: "SRE", cls: "", text: "Latency trending down. Error rate normalizing across regions." },
+    { role: "IC", cls: "ic", text: "Holding bridge until metrics stable and backlog drained." }
+];
+
+let chatIndex = 0;
+function appendChatLine(entry) {
+    const line = document.createElement("div");
+    line.className = "chat-line";
+    line.innerHTML =
+        `<span class="chat-role ${entry.cls}">${entry.role}:</span>` +
+        `<span class="chat-text">${entry.text}</span>`;
+    bridgeChat.appendChild(line);
+    bridgeChat.scrollTop = bridgeChat.scrollHeight;
+}
+
+function playChatScript() {
+    if (chatIndex >= chatScript.length) return;
+    appendChatLine(chatScript[chatIndex]);
+    chatIndex++;
+    setTimeout(playChatScript, 1900);
+}
+playChatScript();
+
+/* METRIC EVOLUTION + RESULT UPDATE */
+const latencyVal = document.getElementById("latencyVal");
+const errorVal = document.getElementById("errorVal");
+const queueVal = document.getElementById("queueVal");
+const cpuVal = document.getElementById("cpuVal");
+const memVal = document.getElementById("memVal");
+const dbVal = document.getElementById("dbVal");
+const hotShard = document.getElementById("hotShard");
+const resultBox = document.getElementById("resultBox");
+
+let tick = 0;
+setInterval(() => {
+    tick++;
+
+    if (tick === 5) {
+        latencyVal.textContent = "3.4s (Improving)";
+        latencyVal.className = "metric-value warn";
+        errorVal.textContent = "1.8% (Decreasing)";
+        queueVal.textContent = "High – Starting to drain";
+    }
+    if (tick === 10) {
+        latencyVal.textContent = "1.6s (Near SLO)";
+        latencyVal.className = "metric-value warn";
+        errorVal.textContent = "0.9% (Stabilizing)";
+        queueVal.textContent = "Moderate – Backlog under control";
+        cpuVal.textContent = "68%";
+        memVal.textContent = "64%";
+        dbVal.textContent = "Within limits";
+        hotShard.className = "heat-cell warm";
+    }
+    if (tick === 16) {
+        latencyVal.textContent = "1.2s (Within SLO)";
+        latencyVal.className = "metric-value good";
+        errorVal.textContent = "0.3% (Normal)";
+        queueVal.textContent = "Normal – Backlog drained";
+        hotShard.className = "heat-cell cool";
+        resultBox.textContent =
+            "Result: SEV‑1 resolved without full outage. Latency restored under SLO, backlog drained, " +
+            "and a repeatable runbook exists for this failure mode.";
+    }
+}, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome – Choose Your Path</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --neon-cyan: #00bcd4;
+      --neon-red: #ff3131;
+      --dark-bg: #0d0d0d;
+      --card-bg: #111;
+      --border-glow: rgba(0, 188, 212, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: var(--dark-bg);
+      color: var(--neon-cyan);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background grid */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 188, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 188, 212, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridScroll 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes gridScroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(50px); }
+    }
+
+    /* Scanline effect */
+    body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 188, 212, 0.02) 50%
+      );
+      background-size: 100% 4px;
+      animation: scanline 8s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100%); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 650px;
+    }
+
+    .box {
+      background: var(--card-bg);
+      border: 2px solid var(--neon-cyan);
+      padding: 50px 40px;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 30px var(--border-glow),
+        inset 0 0 20px rgba(0, 188, 212, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--neon-cyan), var(--neon-red), var(--neon-cyan));
+      border-radius: 12px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s;
+      animation: borderRotate 3s linear infinite;
+    }
+
+    .box:hover::before {
+      opacity: 0.3;
+    }
+
+    @keyframes borderRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-cyan),
+        0 0 30px var(--neon-cyan);
+      animation: flicker 3s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.95; }
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #888;
+      margin-bottom: 35px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .message {
+      font-size: 1.15rem;
+      margin-bottom: 35px;
+      line-height: 1.8;
+      color: #bbb;
+    }
+
+    .highlight {
+      color: var(--neon-cyan);
+      font-weight: bold;
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .btn {
+      display: block;
+      margin: 16px auto;
+      width: 100%;
+      max-width: 320px;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.5s, height 0.5s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .playBtn {
+      border: 3px solid var(--neon-cyan);
+      background: transparent;
+      color: var(--neon-cyan);
+      box-shadow: 0 0 15px var(--border-glow);
+    }
+
+    .playBtn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 
+        0 0 25px var(--neon-cyan),
+        0 0 50px var(--border-glow);
+      transform: translateY(-2px);
+    }
+
+    .homeBtn {
+      border: 2px solid #666;
+      background: transparent;
+      color: #aaa;
+    }
+
+    .homeBtn:hover {
+      background: #555;
+      color: #fff;
+      border-color: #888;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Modal overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 3px solid var(--neon-red);
+      padding: 40px 35px;
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 40px rgba(255, 49, 49, 0.5),
+        inset 0 0 20px rgba(255, 49, 49, 0.1);
+      animation: modalAppear 0.3s ease-out;
+    }
+
+    @keyframes modalAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal h2 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: var(--neon-red);
+      text-shadow: 0 0 10px var(--neon-red);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .modal p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      line-height: 1.7;
+      color: #ccc;
+    }
+
+    .modal .quote {
+      font-size: 1.3rem;
+      font-style: italic;
+      color: var(--neon-cyan);
+      margin-top: 20px;
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    .modal .btn {
+      margin-top: 12px;
+    }
+
+    /* Terminal cursor effect */
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: var(--neon-cyan);
+      margin-left: 5px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .box {
+        padding: 35px 25px;
+      }
+
+      .message {
+        font-size: 1rem;
+      }
+
+      .btn {
+        font-size: 0.9rem;
+        padding: 14px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="box">
+      <h1>System Access<span class="cursor"></span></h1>
+      <div class="subtitle">Karl Dunn - Technical Portfolio</div>
+      
+      <p class="message">
+        You can skim my résumé, or you can <span class="highlight">interact with it</span> and see how I approach systems, failures, and fixes.
+      </p>
+
+      <a href="cyberpunk_shooter.html" class="btn playBtn" id="playGameBtn">
+        ▶ Launch Simulation
+      </a>
+
+      <button class="btn homeBtn" id="homeConfirmBtn">
+        🏠 View Portfolio
+      </button>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="overlay" id="confirmOverlay">
+    <div class="modal">
+      <h2>⚠ Warning</h2>
+      <p>
+        Are you sure you want to skip the simulation?
+      </p>
+      
+      <p class="quote">
+        "Shall we play a game?"
+      </p>
+
+      <a href="cyberpunk_shooter.html" class="btn playBtn">▶ Play the Game</a>
+      <a href="landing_page.html" class="btn homeBtn">Skip – Go to Portfolio</a>
+    </div>
+  </div>
+
+  <script>
+    const playBtn = document.getElementById("playGameBtn");
+    const homeBtn = document.getElementById("homeConfirmBtn");
+    const overlay = document.getElementById("confirmOverlay");
+
+    // Mark that the user has played the game
+    playBtn.addEventListener("click", () => {
+      try {
+        sessionStorage.setItem("playedGame", "yes");
+      } catch (e) {
+        console.log("Session storage not available");
+      }
+    });
+
+    // Home button logic
+    homeBtn.addEventListener("click", () => {
+      let hasPlayed = false;
+      
+      try {
+        hasPlayed = sessionStorage.getItem("playedGame") === "yes";
+      } catch (e) {
+        console.log("Session storage not available");
+      }
+
+      if (hasPlayed) {
+        // They already played → go straight to portfolio
+        window.location.href = "landing_page.html";
+      } else {
+        // First time → show confirmation modal
+        overlay.classList.add("active");
+      }
+    });
+
+    // Close modal when clicking outside
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove("active");
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        overlay.classList.remove("active");
+      }
+    });
+  </script>
+
+</body>
+</html>

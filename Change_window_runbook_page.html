@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Infrastructure Initiative — Incident Simulator</title>
+  <meta name="description" content="Infrastructure Initiative: a browser‑based incident simulator with idempotent targets and a live console.">
+  <meta name="keywords" content="Infrastructure Initiative, Incident Simulator, Automation Engineer, Ansible Idempotency, DevOps Game">
+  <meta property="og:title" content="Infrastructure Initiative — Incident Simulator">
+  <meta property="og:type" content="website">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top, #1a2a3a 0, #050810 55%, #000000 100%);
+      --glass-bg: rgba(10, 20, 40, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --accent: #4af2a1;
+      --accent-soft: rgba(74, 242, 161, 0.15);
+      --danger: #ff4b6e;
+      --danger-soft: rgba(255, 75, 110, 0.18);
+      --text-main: #e6f1ff;
+      --text-muted: #7f8ea3;
+      --warning: #ffb347;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: Consolas, "Courier New", monospace;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to right, rgba(5, 10, 25, 0.9), rgba(5, 10, 25, 0.6));
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      margin-left: 1.25rem;
+      font-size: 0.9rem;
+      position: relative;
+      padding-bottom: 0.15rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.2s ease-out;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 1.5rem 1rem 2.5rem;
+    }
+
+    .shell {
+      max-width: 1100px;
+      width: 100%;
+      display: grid;
+      grid-template-rows: auto 220px 220px;
+      gap: 1rem;
+    }
+
+    .top-panel {
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      background: rgba(5, 10, 25, 0.9);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-panel::before {
+      content: "Infrastructure Initiative // CHANGE WINDOW";
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .status-pill {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--warning);
+      color: var(--warning);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .top-panel p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-top: 0.4rem;
+    }
+
+    .game-area {
+      display: grid;
+      grid-template-columns: 2fr 1.4fr;
+      gap: 1rem;
+    }
+
+    .targets-panel {
+      border-radius: 16px;
+      background: rgba(5, 10, 25, 0.9);
+      border: 1px solid var(--glass-border);
+      padding: 0.9rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .targets-panel::before {
+      content: "MISSION CRITICAL NODES";
+      position: absolute;
+      top: 0.6rem;
+      right: 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .targets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.4rem;
+    }
+
+    .target {
+      border-radius: 12px;
+      padding: 0.7rem 0.6rem;
+      background: rgba(10, 20, 40, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: crosshair;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+    }
+
+    .target-label {
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .target-state {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Hover stress feedback */
+    .target:hover {
+      box-shadow: 0 0 18px rgba(74, 242, 161, 0.4);
+      transform: translateY(-2px);
+      animation: pulse 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 8px rgba(74, 242, 161, 0.3); }
+      to   { box-shadow: 0 0 18px rgba(74, 242, 161, 0.7); }
+    }
+
+    /* Forbidden node styling */
+    .target.forbidden {
+      border-color: var(--danger);
+      box-shadow: 0 0 10px var(--danger-soft);
+    }
+
+    .target.forbidden:hover {
+      animation: flicker 0.25s linear infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { box-shadow: 0 0 10px var(--danger-soft); }
+      50%      { box-shadow: 0 0 18px rgba(255, 75, 110, 0.9); }
+    }
+
+    /* Configured state */
+    .target.configured {
+      border-color: var(--accent);
+      background: rgba(10, 40, 30, 0.9);
+    }
+
+    /* Shake on forbidden hit */
+    .shake {
+      animation: shake 0.35s ease-in-out;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+
+    .side-panel {
+      border-radius: 16px;
+      background: rgba(5, 10, 25, 0.9);
+      border: 1px solid var(--glass-border);
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .side-panel h2 {
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .side-panel p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn-row {
+      margin-top: 0.4rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      cursor: pointer;
+      transition: background 0.12s ease-out, transform 0.12s ease-out;
+    }
+
+    button:hover {
+      background: rgba(74, 242, 161, 0.25);
+      transform: translateY(-1px);
+    }
+
+    button.danger {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .level-status {
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-top: 0.4rem;
+    }
+
+    .level-status span {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Console */
+    .console-panel {
+      border-radius: 16px;
+      background: rgba(5, 10, 25, 0.95);
+      border: 1px solid var(--glass-border);
+      padding: 0.7rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 180px;
+      max-height: 220px;
+    }
+
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .console-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .console-body {
+      flex: 1;
+      background: #02040a;
+      border-radius: 10px;
+      padding: 0.4rem 0.5rem;
+      overflow-y: auto;
+      font-size: 0.75rem;
+    }
+
+    .log-line {
+      white-space: pre-wrap;
+      margin-bottom: 0.1rem;
+    }
+
+    .log-time {
+      color: #5c6f92;
+    }
+
+    .log-level-info {
+      color: var(--accent);
+    }
+
+    .log-level-resolved {
+      color: #7cf7ff;
+    }
+
+    .log-level-error {
+      color: #ffb347;
+    }
+
+    .log-level-critical {
+      color: var(--danger);
+    }
+
+    .log-level-notice {
+      color: #9fa8ff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-rows: auto auto auto;
+      }
+      .game-area {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <div class="brand">RUNBOOK // MELTDOWN</div>
+  <nav>
+        <a href="landing_page.html">Home</a>
+        <a href="linux_runbook_page.html">Linux</a>
+        <a href="html_runbook_page.html">HTML</a>
+        <a href="ansible_runbook_page.html">Ansible</a>
+        <a href="hadoop_runbook_page.html">Hadoop</a>
+        <a href="splunk_runbook_page.html">Splunk</a>
+        <a href="remedy_runbook_page.html">Remedy</a>
+        <a href="Change_window_runbook_page.html">Change Window</a>
+		<a href="index_runbook_page.html">Index.html</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="shell">
+      <section class="top-panel">
+        <div class="title-row">
+          <h1>Infrastructure Initiative — Change Window</h1>
+          <div class="status-pill" id="statusPill">Status: Active</div>
+        </div>
+        <p>
+          Shoot only what is safe to configure. Mission‑critical nodes must be brought to a
+          <code>configured</code> state. Forbidden nodes must never be touched.
+        </p>
+        <p class="hint">
+          Hint: This behaves like Ansible. Once a node is configured, further shots are ignored and logged as idempotent.
+        </p>
+      </section>
+
+      <section class="game-area">
+        <div class="targets-panel">
+          <div class="targets-grid">
+            <div class="target" data-id="svc-api" data-type="safe">
+              <div class="target-label">API Service</div>
+              <div class="target-state" data-state-label>State: pending</div>
+            </div>
+            <div class="target" data-id="pkg-nginx" data-type="safe">
+              <div class="target-label">Nginx Package</div>
+              <div class="target-state" data-state-label>State: pending</div>
+            </div>
+            <div class="target forbidden" data-id="db-prod" data-type="forbidden">
+              <div class="target-label">PROD Database</div>
+              <div class="target-state" data-state-label>State: forbidden</div>
+            </div>
+            <div class="target" data-id="svc-worker" data-type="safe">
+              <div class="target-label">Worker Service</div>
+              <div class="target-state" data-state-label>State: pending</div>
+            </div>
+            <div class="target" data-id="pkg-python" data-type="safe">
+              <div class="target-label">Python Runtime</div>
+              <div class="target-state" data-state-label>State: pending</div>
+            </div>
+            <div class="target forbidden" data-id="cfg-firewall" data-type="forbidden">
+              <div class="target-label">Firewall Policy</div>
+              <div class="target-state" data-state-label>State: forbidden</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <h2>Controls</h2>
+          <p>Click a node to "shoot" it. Safe nodes should be configured. Forbidden nodes will end the change window.</p>
+          <div class="btn-row">
+            <button id="btnReset">Reset Level</button>
+            <button id="btnComplete" class="danger">Force Complete</button>
+          </div>
+          <div class="level-status" id="levelStatus">
+            Level Status: <span>In Progress</span>
+          </div>
+          <p style="margin-top:0.4rem;">
+            When all safe nodes are configured without touching forbidden nodes, this change window is marked complete and your
+            certification is stored in <code>sessionStorage</code>.
+          </p>
+        </aside>
+      </section>
+
+      <section class="console-panel">
+        <div class="console-header">
+          <div class="console-title">EVENT CONSOLE</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);">Every action is logged with a level and timestamp.</div>
+        </div>
+        <div class="console-body" id="consoleBody"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Infrastructure Initiative · Idempotent targets, forbidden nodes, and a live incident console
+  </footer>
+
+  <script>
+    (function () {
+      const targets = document.querySelectorAll(".target");
+      const consoleBody = document.getElementById("consoleBody");
+      const levelStatus = document.getElementById("levelStatus");
+      const statusPill = document.getElementById("statusPill");
+      const btnReset = document.getElementById("btnReset");
+      const btnComplete = document.getElementById("btnComplete");
+
+      const state = {};
+      let levelOver = false;
+
+      function initState() {
+        targets.forEach(t => {
+          const id = t.dataset.id;
+          const type = t.dataset.type;
+          state[id] = {
+            type,
+            status: type === "forbidden" ? "forbidden" : "pending"
+          };
+          const label = t.querySelector("[data-state-label]");
+          if (label) {
+            label.textContent = "State: " + state[id].status;
+          }
+          t.classList.remove("configured", "shake");
+        });
+        levelOver = false;
+        updateLevelStatus("In Progress", "accent");
+        if (statusPill) {
+          statusPill.textContent = "Status: Active";
+          statusPill.style.borderColor = "var(--warning)";
+          statusPill.style.color = "var(--warning)";
+        }
+        logLine("NOTICE", "Change window started. Targets ready for configuration.");
+      }
+
+      function timestamp() {
+        const d = new Date();
+        return d.toLocaleTimeString();
+      }
+
+      function logLine(level, message) {
+        if (!consoleBody) return;
+        const line = document.createElement("div");
+        line.className = "log-line";
+
+        const timeSpan = document.createElement("span");
+        timeSpan.className = "log-time";
+        timeSpan.textContent = "[" + timestamp() + "] ";
+
+        const levelSpan = document.createElement("span");
+        let levelClass = "";
+        switch (level) {
+          case "INFO": levelClass = "log-level-info"; break;
+          case "RESOLVED": levelClass = "log-level-resolved"; break;
+          case "ERROR": levelClass = "log-level-error"; break;
+          case "CRITICAL": levelClass = "log-level-critical"; break;
+          case "NOTICE": levelClass = "log-level-notice"; break;
+        }
+        levelSpan.className = levelClass;
+        levelSpan.textContent = level + ": ";
+
+        const msgSpan = document.createElement("span");
+        msgSpan.textContent = message;
+
+        line.appendChild(timeSpan);
+        line.appendChild(levelSpan);
+        line.appendChild(msgSpan);
+        consoleBody.appendChild(line);
+        consoleBody.scrollTop = consoleBody.scrollHeight;
+      }
+
+      function updateLevelStatus(text, mode) {
+        if (!levelStatus) return;
+        const span = levelStatus.querySelector("span");
+        span.textContent = text;
+        if (mode === "success") {
+          span.style.color = "var(--accent)";
+        } else if (mode === "danger") {
+          span.style.color = "var(--danger)";
+        } else {
+          span.style.color = "var(--accent)";
+        }
+      }
+
+      function checkCompletion() {
+        // All safe nodes must be configured
+        const allConfigured = Object.values(state).every(s => {
+          if (s.type === "safe") return s.status === "configured";
+          return true;
+        });
+        if (allConfigured && !levelOver) {
+          levelOver = true;
+          updateLevelStatus("Completed", "success");
+          logLine("RESOLVED", "All safe nodes configured successfully. Change window completed.");
+          if (statusPill) {
+            statusPill.textContent = "Status: Completed";
+            statusPill.style.borderColor = "var(--accent)";
+            statusPill.style.color = "var(--accent)";
+          }
+          // Persist certification
+          sessionStorage.setItem("changeWindowComplete", "true");
+        }
+      }
+
+      function handleTargetClick(e) {
+        const target = e.currentTarget;
+        const id = target.dataset.id;
+        const node = state[id];
+        if (!node || levelOver) {
+          logLine("ERROR", "No target detected. Check aim or level status.");
+          return;
+        }
+
+        if (node.type === "forbidden") {
+          // Forbidden hit: game over
+          node.status = "violated";
+          const label = target.querySelector("[data-state-label]");
+          if (label) label.textContent = "State: violated";
+          target.classList.add("shake");
+          logLine("CRITICAL", "Unauthorized change attempted on " + id + ". Change window failed.");
+          updateLevelStatus("Failed — Forbidden node hit", "danger");
+          if (statusPill) {
+            statusPill.textContent = "Status: Failed";
+            statusPill.style.borderColor = "var(--danger)";
+            statusPill.style.color = "var(--danger)";
+          }
+          levelOver = true;
+          return;
+        }
+
+        // Safe node logic
+        if (node.status === "configured") {
+          logLine("INFO", "Target " + id + " already configured. No action taken (idempotent).");
+          return;
+        }
+
+        // First time configuration
+        node.status = "configured";
+        target.classList.add("configured");
+        const label = target.querySelector("[data-state-label]");
+        if (label) label.textContent = "State: configured";
+        logLine("INFO", "Configured target " + id + " successfully.");
+        checkCompletion();
+      }
+
+      targets.forEach(t => {
+        t.addEventListener("click", handleTargetClick);
+      });
+
+      if (btnReset) {
+        btnReset.addEventListener("click", () => {
+          consoleBody.innerHTML = "";
+          initState();
+        });
+      }
+
+      if (btnComplete) {
+        btnComplete.addEventListener("click", () => {
+          if (!levelOver) {
+            levelOver = true;
+            updateLevelStatus("Force Completed", "danger");
+            logLine("ERROR", "Change window force‑completed by operator. Certification not granted.");
+            if (statusPill) {
+              statusPill.textContent = "Status: Force Completed";
+              statusPill.style.borderColor = "var(--danger)";
+              statusPill.style.color = "var(--danger)";
+            }
+          }
+        });
+      }
+
+      // Initial boot
+      initState();
+    })();
+  </script>
+</body>
+</html>

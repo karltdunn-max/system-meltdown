@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Splunk Engineering — Karl Dunn</title>
+  <meta name="description" content="Splunk dashboards, SPL searches, ingestion troubleshooting, and operational monitoring.">
+  <meta name="keywords" content="Splunk, SPL, Observability, Monitoring, Logging">
+  <meta property="og:title" content="Splunk Engineering — Karl Dunn">
+  <meta property="og:type" content="website">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top, #102030 0, #050810 55%, #000000 100%);
+      --glass-bg: rgba(10, 20, 40, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --accent: #4af2a1;
+      --text-main: #e6f1ff;
+      --text-muted: #7f8ea3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: Consolas, "Courier New", monospace;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to right, rgba(5, 10, 25, 0.9), rgba(5, 10, 25, 0.6));
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    nav a {
+      color: var(--text-main);
+      text-decoration: none;
+      margin-left: 1.25rem;
+      font-size: 0.9rem;
+      position: relative;
+      padding-bottom: 0.15rem;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.2s ease-out;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .content {
+      max-width: 900px;
+      width: 100%;
+      padding: 2rem 2.5rem;
+      border-radius: 18px;
+      background: rgba(5, 10, 25, 0.9);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content::before {
+      content: "SPLUNK NODE: OBSERVABILITY";
+      position: absolute;
+      top: 0.75rem;
+      right: 1.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.6rem;
+      line-height: 1.5;
+    }
+
+    ul {
+      margin-left: 1.2rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.1rem 0.25rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav-inner">
+      <div class="brand">RUNBOOK // SPLUNK</div>
+      <nav>
+        <a href="landing_page.html">Home</a>
+        <a href="linux_runbook_page.html">Linux</a>
+        <a href="html_runbook_page.html">HTML</a>
+        <a href="ansible_runbook_page.html">Ansible</a>
+        <a href="hadoop_runbook_page.html">Hadoop</a>
+        <a href="splunk_runbook_page.html">Splunk</a>
+        <a href="remedy_runbook_page.html">Remedy</a>
+        <a href="Change_window_runbook_page.html">Change Window</a>
+		<a href="index_runbook_page.html">Index.html</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="content">
+      <h1>Splunk Engineering & Observability</h1>
+      <p class="subtitle">
+        Turning logs into insight, dashboards into decisions, and ingestion pipelines into reliable observability.
+      </p>
+
+      <h2>What I Do in Splunk</h2>
+      <ul>
+        <li>Build dashboards for performance, error rates, and service health</li>
+        <li>Create alerts with throttling and correlation logic</li>
+        <li>Troubleshoot ingestion issues using <code>metrics.log</code> and <code>splunkd.log</code></li>
+        <li>Optimize SPL searches for speed and cost</li>
+      </ul>
+
+      <h2>Example SPL Patterns</h2>
+      <p><code>index=prod error OR fail | stats count by host</code></p>
+      <p><code>index=web sourcetype=nginx | timechart span=5m avg(response_time)</code></p>
+
+      <h2>How Splunk Connects to the Portfolio</h2>
+      <p>
+        The Infrastructure Initiative console is inspired by Splunk’s event viewer — timestamped logs, severity levels, and real‑time updates.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Splunk Engineer · Every log tells a story, every search reveals the truth
+  </footer>
+</body>
+</html>

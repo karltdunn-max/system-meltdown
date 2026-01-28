@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Technical Skills Crossword</title>
+<style>
+  body {
+    font-family: 'Verdana', sans-serif;
+    background: #0b1220;
+    color: white;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 1. Paste Resume Section */
+  .resume-container {
+    background: #111a2f;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #1f2a44;
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  h2 { color: #00bcd4; margin-top: 0; }
+
+  textarea {
+    width: 100%;
+    height: 150px;
+    background: #000;
+    color: #00ff00;
+    border: 1px solid #00bcd4;
+    padding: 10px;
+    font-family: monospace;
+    border-radius: 4px;
+    resize: none;
+    margin-bottom: 15px;
+  }
+
+  .btn-group { display: flex; gap: 10px; }
+
+  button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  .btn-build { background: #00c853; color: white; }
+  .btn-demo { background: #1f2a44; color: #b8d4e8; border: 1px solid #00bcd4; }
+  button:hover { opacity: 0.8; transform: translateY(-2px); }
+
+  /* 2. Crossword Grid */
+  #grid {
+    display: grid;
+    /* 15 columns to fit "KUBERNETES" and "INFRASTRUCTURE" */
+    grid-template-columns: repeat(15, 35px);
+    grid-template-rows: repeat(15, 35px);
+    gap: 1px;
+    margin-bottom: 30px;
+    background: #1f2a44;
+    padding: 5px;
+    border-radius: 4px;
+  }
+
+  .cell {
+    position: relative;
+    width: 35px;
+    height: 35px;
+    background: #111a2f;
+  }
+
+  .cell input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #00bcd4;
+    text-align: center;
+    font-size: 18px;
+    text-transform: uppercase;
+    outline: none;
+    font-weight: bold;
+  }
+
+  .black { background: #050a14; }
+
+  .number {
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    font-size: 9px;
+    color: #00bcd4;
+    z-index: 10;
+  }
+
+  .clues-container {
+    display: flex;
+    gap: 60px;
+    background: #111a2f;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .clue-box h3 { border-bottom: 1px solid #00bcd4; padding-bottom: 5px; }
+  ol { padding-left: 20px; color: #b8d4e8; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="resume-container">
+  <h2>1. Paste Resume</h2>
+  <textarea id="resumeInput" placeholder="Paste your technical skills here...">Network & Fault Management: Troubleshooting, Incident Management, Root Cause Analysis. Databases: Oracle, PL/SQL, SQL Server. Big Data: Hadoop, Kafka, Zookeeper. Cloud: AWS EKS, Docker, Kubernetes.</textarea>
+  <div class="btn-group">
+    <button class="btn-build" onclick="alert('Analyzing Resume Skills...')">Build Crossword</button>
+    <button class="btn-demo" onclick="useDemo()">Use Demo Resume</button>
+  </div>
+</div>
+
+<h2>2. Solve Crossword</h2>
+<div id="grid"></div>
+
+<div style="margin-bottom: 20px;">
+    <button class="btn-demo" onclick="solve()">Reveal Answers</button>
+</div>
+
+<div class="clues-container">
+  <div class="clue-box">
+    <h3>Across</h3>
+    <ol id="across"></ol>
+  </div>
+  <div class="clue-box">
+    <h3>Down</h3>
+    <ol id="down"></ol>
+  </div>
+</div>
+
+<script>
+/**
+ * CORRECTED GRID LOGIC
+ * Words are mapped to specific coordinates to ensure they intersect properly.
+ */
+const rows = 15;
+const cols = 15;
+const layout = Array.from({ length: rows }, () => Array(cols).fill("#"));
+
+const words = [
+  { word: "KUBERNETES", r: 2, c: 2, dir: "across", clue: "Container orchestration platform" },
+  { word: "LINUX", r: 2, c: 2, dir: "down", clue: "Open-source OS kernel" },
+  { word: "NETWORK", r: 6, c: 1, dir: "across", clue: "Connected system of computers" },
+  { word: "HADOOP", r: 4, c: 5, dir: "down", clue: "Big Data distributed processing" },
+  { word: "DATABASE", r: 9, c: 5, dir: "across", clue: "Structured data storage" },
+  { word: "SPLUNK", r: 6, c: 5, dir: "down", clue: "Log analysis and observability tool" },
+  { word: "CLOUD", r: 11, c: 2, dir: "across", clue: "On-demand computing resources" },
+  { word: "DEBUG", r: 2, c: 10, dir: "down", clue: "The process of fixing code errors" }
+];
+
+// Populate the layout matrix with letters
+words.forEach(obj => {
+  for (let i = 0; i < obj.word.length; i++) {
+    let row = obj.dir === "across" ? obj.r : obj.r + i;
+    let col = obj.dir === "across" ? obj.c + i : obj.c;
+    layout[row][col] = obj.word[i];
+  }
+});
+
+const gridEl = document.getElementById("grid");
+const acrossEl = document.getElementById("across");
+const downEl = document.getElementById("down");
+let wordCounter = 1;
+
+// Build the HTML Grid
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+
+    if (layout[r][c] === "#") {
+      cell.classList.add("black");
+    } else {
+      const input = document.createElement("input");
+      input.maxLength = 1;
+      input.dataset.answer = layout[r][c];
+      cell.appendChild(input);
+
+      // Add numbers for the start of words
+      const startingWord = words.find(w => w.r === r && w.c === c);
+      if (startingWord) {
+        const num = document.createElement("div");
+        num.className = "number";
+        num.textContent = wordCounter;
+        cell.appendChild(num);
+        
+        const clueLi = `<li><strong>${wordCounter}.</strong> ${startingWord.clue}</li>`;
+        if (startingWord.dir === "across") acrossEl.innerHTML += clueLi;
+        else downEl.innerHTML += clueLi;
+        
+        wordCounter++;
+      }
+    }
+    gridEl.appendChild(cell);
+  }
+}
+
+function solve() {
+  document.querySelectorAll("input").forEach(i => {
+    i.value = i.dataset.answer;
+    i.style.color = "#00ff00"; // Turn green when solved
+  });
+}
+
+function useDemo() {
+    document.getElementById("resumeInput").value = "DEMO MODE: Loading standard SRE/DevOps skill set...";
+}
+</script>
+
+</body>
+</html>

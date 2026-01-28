@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splunk Monitoring & Incident Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Hero Background */
+        .hero {
+            position: relative;
+            min-height: 550px;
+            background: linear-gradient(135deg, #3d5772 0%, #2d4a5f 50%, #1d3a4f 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* Animated data streams */
+        .data-stream {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.6), transparent);
+            animation: streamFlow 3s linear infinite;
+        }
+
+        @keyframes streamFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .data-stream:nth-child(1) { top: 15%; animation-delay: 0s; }
+        .data-stream:nth-child(2) { top: 30%; animation-delay: 0.8s; }
+        .data-stream:nth-child(3) { top: 45%; animation-delay: 1.6s; }
+        .data-stream:nth-child(4) { top: 60%; animation-delay: 2.4s; }
+        .data-stream:nth-child(5) { top: 75%; animation-delay: 3.2s; }
+
+        /* Floating data particles */
+        .data-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ff6b35;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.8);
+            animation: particleFloat 6s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(50px) scale(1); opacity: 0; }
+        }
+
+        .data-particle:nth-child(6) { left: 10%; animation-delay: 0s; }
+        .data-particle:nth-child(7) { left: 25%; animation-delay: 1s; }
+        .data-particle:nth-child(8) { left: 40%; animation-delay: 2s; }
+        .data-particle:nth-child(9) { left: 55%; animation-delay: 3s; }
+        .data-particle:nth-child(10) { left: 70%; animation-delay: 4s; }
+        .data-particle:nth-child(11) { left: 85%; animation-delay: 5s; }
+
+        /* Radar/Search Animation */
+        .radar-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            opacity: 0.1;
+        }
+
+        .radar-circle {
+            position: absolute;
+            border: 2px solid #ff6b35;
+            border-radius: 50%;
+            animation: radarPulse 3s ease-out infinite;
+        }
+
+        .radar-circle:nth-child(1) { width: 100px; height: 100px; top: 150px; left: 150px; animation-delay: 0s; }
+        .radar-circle:nth-child(2) { width: 200px; height: 200px; top: 100px; left: 100px; animation-delay: 0.5s; }
+        .radar-circle:nth-child(3) { width: 300px; height: 300px; top: 50px; left: 50px; animation-delay: 1s; }
+        .radar-circle:nth-child(4) { width: 400px; height: 400px; top: 0; left: 0; animation-delay: 1.5s; }
+
+        @keyframes radarPulse {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* Hero Content */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 1200px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .splunk-logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .splunk-icon {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.5);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 12px 25px;
+            background: rgba(255, 107, 53, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.5);
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: slideIn 0.6s ease-out both;
+        }
+
+        .badge:nth-child(1) { animation-delay: 0.2s; }
+        .badge:nth-child(2) { animation-delay: 0.4s; }
+        .badge:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge:hover {
+            background: rgba(255, 107, 53, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+            color: #ff6b35;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b35, transparent);
+            animation: expand 1s ease-out;
+        }
+
+        @keyframes expand {
+            from { width: 0; }
+            to { width: 60%; }
+        }
+
+        /* Achievement Cards */
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .achievement-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.05));
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out both;
+        }
+
+        .achievement-card:nth-child(1) { animation-delay: 0.1s; }
+        .achievement-card:nth-child(2) { animation-delay: 0.2s; }
+        .achievement-card:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .achievement-card:hover::before {
+            left: 100%;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+            border-color: rgba(255, 107, 53, 0.6);
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .achievement-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #ff6b35;
+        }
+
+        .achievement-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* SPL Query Example */
+        .query-example {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 60px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .query-example h3 {
+            color: #ff6b35;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .query-line {
+            color: #00ff00;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .spl-command { color: #ff6b35; font-weight: bold; }
+        .spl-field { color: #00d4ff; }
+        .spl-value { color: #ffeb3b; }
+        .spl-operator { color: #f7931e; }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(0, 0, 0, 0.3));
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 60px 0;
+        }
+
+        .dashboard-preview h3 {
+            color: #ff6b35;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b35;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 15px 30px;
+            background: rgba(255, 107, 53, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 53, 0.5);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 107, 53, 0.4);
+            transform: translateX(-5px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 42px;
+            }
+
+            .hero-subtitle {
+                font-size: 20px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .splunk-logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .splunk-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="Resume_Page.html#skills-section" class="back-button">← Back to Portfolio</a
+	### <a href="#" class="back-button">← Back to Portfolio</a>
+
+    <div class="hero">
+        <!-- Data Streams -->
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        
+        <!-- Data Particles -->
+        <div class="data-particle"></div>
+        <div class="data-particle"></div>
+        <div class="data-particle"></div>
+        <div class="data-particle"></div>
+        <div class="data-particle"></div>
+        <div class="data-particle"></div>
+
+        <!-- Radar Animation -->
+        <div class="radar-container">
+            <div class="radar-circle"></div>
+            <div class="radar-circle"></div>
+            <div class="radar-circle"></div>
+            <div class="radar-circle"></div>
+        </div>
+
+        <div class="hero-content">
+            <div class="splunk-logo">
+                <div class="splunk-icon">🔍</div>
+            </div>
+            
+            <h1 class="hero-title">Splunk</h1>
+            <p class="hero-subtitle">Monitoring & Incident Analysis</p>
+            
+            <div class="tech-badges">
+                <span class="badge">📊 SPL Queries</span>
+                <span class="badge">📈 Dashboards</span>
+                <span class="badge">🔍 Pattern Analysis</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2 class="section-title">Key Achievements</h2>
+        
+        <div class="achievements">
+            <div class="achievement-card">
+                <div class="achievement-icon">📝</div>
+                <h3>Built SPL Queries</h3>
+                <p>Developed complex Search Processing Language queries for real-time log analysis, pattern matching, and data correlation across multiple systems.</p>
+            </div>
+            
+            <div class="achievement-card">
+                <div class="achievement-icon">📊</div>
+                <h3>Created Dashboards for Latency & Failures</h3>
+                <p>Designed comprehensive dashboards tracking system latency, failure rates, and performance metrics with real-time alerting capabilities.</p>
+            </div>
+            
+            <div class="achievement-card">
+                <div class="achievement-icon">⏱️</div>
+                <h3>Reduced MTTR with Pattern Analysis</h3>
+                <p>Implemented advanced pattern recognition to identify recurring issues, significantly reducing Mean Time To Resolution for critical incidents.</p>
+            </div>
+        </div>
+
+        <div class="query-example">
+            <h3>Sample SPL Query - Analyze Error Patterns</h3>
+            <div class="query-line">
+                <span class="spl-command">index=</span><span class="spl-value">application_logs</span> 
+                <span class="spl-command">sourcetype=</span><span class="spl-value">app_server</span>
+            </div>
+            <div class="query-line">
+                <span class="spl-operator">|</span> <span class="spl-command">search</span> 
+                <span class="spl-field">log_level</span>=<span class="spl-value">"ERROR"</span> 
+                <span class="spl-operator">OR</span> 
+                <span class="spl-field">log_level</span>=<span class="spl-value">"FATAL"</span>
+            </div>
+            <div class="query-line">
+                <span class="spl-operator">|</span> <span class="spl-command">stats</span> 
+                <span class="spl-command">count</span> by 
+                <span class="spl-field">error_type</span>, 
+                <span class="spl-field">host</span>, 
+                <span class="spl-field">application</span>
+            </div>
+            <div class="query-line">
+                <span class="spl-operator">|</span> <span class="spl-command">where</span> 
+                <span class="spl-field">count</span> <span class="spl-operator">&gt;</span> <span class="spl-value">10</span>
+            </div>
+            <div class="query-line">
+                <span class="spl-operator">|</span> <span class="spl-command">sort</span> 
+                <span class="spl-operator">-</span> <span class="spl-field">count</span>
+            </div>
+            <div class="query-line">
+                <span class="spl-operator">|</span> <span class="spl-command">head</span> <span class="spl-value">20</span>
+            </div>
+        </div>
+
+        <div class="dashboard-preview">
+            <h3>Live Dashboard Metrics</h3>
+            <div class="dashboard-metrics">
+                <div class="metric-card">
+                    <div class="metric-value">99.2%</div>
+                    <div class="metric-label">Uptime</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">125ms</div>
+                    <div class="metric-label">Avg Latency</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">12</div>
+                    <div class="metric-label">Active Alerts</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">2.4M</div>
+                    <div class="metric-label">Events/Day</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.02%</div>
+                    <div class="metric-label">Error Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Performance Impact</h2>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number">75%</div>
+                <div class="stat-label">Faster Detection</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Dashboards Created</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-number">1M+</div>
+                <div class="stat-label">Events Analyzed</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Monitoring</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

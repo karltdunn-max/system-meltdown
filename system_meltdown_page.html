@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Infrastructure Initiative – Cinematic Portfolio OS</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Consolas", monospace;
+        background: linear-gradient(135deg, #0a0f1f 0%, #1a1f3f 100%);
+        color: #e0f7ff;
+        overflow-x: hidden;
+    }
+
+    /* HERO with Background Image */
+    .hero {
+        background: url('I_Know_Why_runbokks_Are_Imortant.png') center/cover no-repeat;
+        padding: 80px 20px;
+        text-align: center;
+        color: #00aaff;
+        text-shadow: 0 0 12px #00aaff, 0 0 20px rgba(0, 170, 255, 0.5);
+        position: relative;
+        z-index: 5;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Dark overlay for readability */
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 17, 31, 0.7);
+        z-index: -1;
+    }
+
+    .hero img {
+        width: 120px;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 20px #00aaff);
+    }
+
+    .hero h1 {
+        font-size: 42px;
+        letter-spacing: 3px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero p {
+        font-size: 18px;
+        max-width: 700px;
+        margin: 20px auto;
+        position: relative;
+        z-index: 1;
+        line-height: 1.6;
+        background: linear-gradient(90deg, 
+            #00ffcc 0%, 
+            #00ffcc 10%, 
+            rgba(224, 247, 255, 0.6) 10%, 
+            rgba(224, 247, 255, 0.6) 100%);
+        background-size: 0% 100%;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: spotlight 8s ease-in-out infinite;
+        font-weight: bold;
+    }
+
+    @keyframes spotlight {
+        0% {
+            background-size: 0% 100%;
+        }
+        50% {
+            background-size: 100% 100%;
+        }
+        100% {
+            background-size: 100% 100%;
+        }
+    }
+
+    /* NAVIGATION */
+    nav {
+        background: #111827;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        border-bottom: 1px solid #00aaff;
+        position: relative;
+        z-index: 5;
+        box-shadow: 0 4px 20px rgba(0, 170, 255, 0.3);
+    }
+
+    nav a {
+        color: #00d4ff;
+        text-decoration: none;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    nav a:hover {
+        color: #00ffcc;
+        text-shadow: 0 0 10px #00ffcc;
+    }
+
+    nav img {
+        width: 24px;
+    }
+
+    /* SECTIONS */
+    section {
+        padding: 50px 20px;
+        max-width: 1000px;
+        margin: auto;
+        position: relative;
+        z-index: 5;
+    }
+
+    h2 {
+        color: #00d4ff;
+        text-shadow: 0 0 8px #00d4ff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 32px;
+    }
+
+    h2 img {
+        width: 40px;
+    }
+
+    .card {
+        background: rgba(17, 24, 39, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        border: 1px solid #00aaff;
+        box-shadow: 0 0 10px #003344, 0 0 30px rgba(0, 170, 255, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .card h3 {
+        color: #00ffcc;
+        text-shadow: 0 0 8px #00ffcc;
+    }
+
+    .card img {
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 10px;
+        border: 1px solid #00aaff;
+    }
+
+    .card ul {
+        line-height: 2;
+    }
+
+    .card ul li {
+        margin-bottom: 10px;
+    }
+
+    /* DEMOS */
+    .slider {
+        width: 100%;
+        height: 8px;
+        background: #0a0f1f;
+        border-radius: 5px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #00aaff;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 10px #00aaff;
+    }
+
+    .casino-select {
+        width: 100%;
+        padding: 10px;
+        background: #0a0f1f;
+        color: #00ffcc;
+        border: 1px solid #00ffcc;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .demo-btn {
+        background: #00aaff;
+        padding: 12px 20px;
+        border: none;
+        color: #00111f;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+        box-shadow: 0 0 10px #00aaff;
+        transition: all 0.3s ease;
+    }
+
+    .demo-btn:hover {
+        background: #33ccff;
+        box-shadow: 0 0 20px #00aaff;
+        transform: translateY(-2px);
+    }
+
+    /* FLOATING ICONS */
+    .float-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+    }
+
+    .icon {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: rgba(0,255,180,0.6);
+        box-shadow: 0 0 12px #00ffc8, 0 0 22px #00ffc8;
+        animation: drift 18s linear infinite, spin 6s linear infinite;
+        opacity: 0.5;
+        border-radius: 4px;
+    }
+
+    @keyframes drift {
+        from { transform: translateY(110vh) translateX(0); }
+        to { transform: translateY(-20vh) translateX(40px); }
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* FLASH EVENT */
+    .flash {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('I_Know_Why_runbokks_Are_Imortant.png') center/cover no-repeat;
+        opacity: 0;
+        z-index: 999;
+        pointer-events: none;
+        transition: opacity 5s ease-out;
+    }
+
+    .flash.active {
+        opacity: 1;
+        filter: brightness(2.5) contrast(1.4);
+    }
+</style>
+</head>
+
+<body>
+
+<!-- FLOATING ICONS + FLASH -->
+<div class="float-layer" id="floatLayer"></div>
+<div class="flash" id="flashEffect"></div>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Infrastructure Initiative – CINEMATIC PORTFOLIO OS</h1>
+    <p>
+        A fusion of DevOps engineering, creative design, and interactive storytelling.  
+        Explore the universe where technology, imagination, and AI-assisted innovation collide.
+    </p>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+    <a href="#cinematic">🎮 Cinematic Tech</a>
+    <a href="#skills">💼 Skills</a>
+    <a href="#runbooks">📚 Runbooks</a>
+    <a href="#projects">🚀 Projects</a>
+    <a href="#demos">⚡ Demos</a>
+</nav>
+
+<!-- CINEMATIC TECH -->
+<section id="cinematic">
+    <h2>🎮 Building Cinematic Games with HTML, CSS, and JavaScript</h2>
+
+    <div class="card">
+        <p>
+            Infrastructure Initiative demonstrates how far web technology has evolved. With nothing more than 
+            <strong>HTML, CSS, and JavaScript</strong>, you can build visually spectacular, cinematic experiences 
+            that feel like full desktop games.
+        </p>
+
+        <p>
+            This game is a fusion of <strong>human imagination</strong> and <strong>AI-assisted creativity</strong>. 
+            Every screen, animation, and control panel is built from the same technologies that power the modern web.
+        </p>
+    </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+    <h2>💼 How This Relates to Your Resume</h2>
+
+    <div class="card">
+        <p>
+            The structure of this game mirrors the structure of your résumé.  
+            Each subsystem, menu, and interactive element reflects a real skill:
+        </p>
+
+        <ul>
+            <li>Config-driven architecture → YAML, JSON</li>
+            <li>Dynamic UI generation → Python GUIs</li>
+            <li>System orchestration → Hadoop, Linux</li>
+            <li>Incident simulation → Ops Toolkit</li>
+            <li>Creative engineering → Cinematic interfaces</li>
+        </ul>
+    </div>
+</section>
+
+<!-- RUNBOOKS -->
+<section id="runbooks">
+    <h2>📚 Why Runbooks Matter</h2>
+
+    <div class="card">
+        <p>
+            Runbooks are the backbone of real-world operations.  
+            They bring structure to chaos, guide incident response, and ensure repeatable outcomes.
+        </p>
+
+        <p>
+            In Infrastructure Initiative, runbooks become interactive guides and branching decision trees —  
+            mirroring your real experience in production support and distributed systems.
+        </p>
+    </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+    <h2>🚀 Project Screenshots</h2>
+
+    <div class="card">
+        <h3>Infrastructure Initiative Control Panel</h3>
+        <p>Interactive control panel for system management and monitoring.</p>
+    </div>
+
+    <div class="card">
+        <h3>Ops Toolkit</h3>
+        <p>Comprehensive operations toolkit for incident response and system diagnostics.</p>
+    </div>
+
+    <div class="card">
+        <h3>Infrastructure Initiative Simulator</h3>
+        <p>Full-scale disaster simulation and recovery platform.</p>
+    </div>
+</section>
+
+<!-- DEMOS -->
+<section id="demos">
+    <h2>⚡ Interactive Technology Demos</h2>
+
+    <div class="card">
+        <h3>🎚️ Slider Demo</h3>
+        <input type="range" min="1" max="100" value="50" class="slider" id="demoSlider">
+        <p style="margin-top: 10px; color: #00ffcc;">Value: <span id="sliderValue">50</span></p>
+    </div>
+
+    <div class="card">
+        <h3>🎰 Casino Pull-Down</h3>
+        <select class="casino-select">
+            <option>Spin the Wheel</option>
+            <option>Jackpot Mode</option>
+            <option>Low Stakes</option>
+            <option>High Stakes</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <h3>🔨 Hadoop Smash</h3>
+        <button class="demo-btn" onclick="alert('💥 Hadoop servers smashed! Cluster restarting...')">HADOOP SMASH</button>
+    </div>
+</section>
+
+<script>
+    // Generate floating icons
+    const layer = document.getElementById("floatLayer");
+
+    for (let i = 0; i < 25; i++) {
+        const icon = document.createElement("div");
+        icon.classList.add("icon");
+
+        icon.style.left = Math.random() * 100 + "vw";
+        icon.style.top = Math.random() * 100 + "vh";
+
+        icon.style.animationDuration = (12 + Math.random() * 12) + "s";
+
+        const size = 20 + Math.random() * 40;
+        icon.style.width = size + "px";
+        icon.style.height = size + "px";
+
+        layer.appendChild(icon);
+    }
+
+    // Flash event after 30 seconds
+    setTimeout(() => {
+        const flash = document.getElementById("flashEffect");
+        flash.classList.add("active");
+
+        setTimeout(() => {
+            flash.classList.remove("active");
+        }, 5000);
+
+    }, 30000);
+
+    // Slider demo
+    const slider = document.getElementById("demoSlider");
+    const sliderValue = document.getElementById("sliderValue");
+    
+    if (slider && sliderValue) {
+        slider.addEventListener("input", function() {
+            sliderValue.textContent = this.value;
+        });
+    }
+</script>
+
+</body>
+</html>

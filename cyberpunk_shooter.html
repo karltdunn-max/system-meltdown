@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Infrastructure Initiative</title>
+  <style>
+    body {
+      margin: 0;
+      background: #050814;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    #gameContainer {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      cursor: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #topArea {
+      flex: 1;
+      position: relative;
+    }
+
+    #gameCanvas {
+      display: block;
+    }
+
+    #crosshair {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 2px solid #00e5ff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 10px #00e5ff;
+      z-index: 5;
+    }
+
+    #crosshair::before,
+    #crosshair::after {
+      content: "";
+      position: absolute;
+      background: #00e5ff;
+    }
+
+    #crosshair::before {
+      width: 2px;
+      height: 40px;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+
+    #crosshair::after {
+      width: 40px;
+      height: 2px;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    #hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.4);
+      padding: 10px 15px;
+      border-radius: 6px;
+      border: 1px solid #00e5ff;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    #logConsole {
+      height: 140px;
+      background: #050814;
+      border-top: 1px solid #00e5ff;
+      padding: 8px 10px;
+      font-family: "Consolas", monospace;
+      font-size: 12px;
+      overflow-y: auto;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.7);
+    }
+
+    .log-line {
+      margin: 2px 0;
+      white-space: nowrap;
+    }
+
+    .log-info { color: #00e5ff; }
+    .log-resolved { color: #00ff7f; }
+    .log-warning { color: #ffb300; }
+    .log-error { color: #ff5252; }
+    .log-debug { color: #9e9e9e; }
+
+    #titleScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top, #1a237e 0, #050814 55%, #000000 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 30;
+    }
+
+    #gameTitle {
+      font-size: 64px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #ff5252;
+      text-shadow:
+        0 0 10px #ff1744,
+        0 0 20px #ff1744,
+        0 0 40px #ff1744,
+        0 0 80px #ff1744;
+      margin-bottom: 10px;
+    }
+
+    #gameSubtitle {
+      font-size: 18px;
+      color: #e0e0e0;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #modeTitle {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #00e5ff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #modeButtons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .menuButton {
+      min-width: 260px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 2px solid #00e5ff;
+      background: radial-gradient(circle at top, #263238, #000000);
+      color: #e0f7fa;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow:
+        0 0 10px rgba(0,229,255,0.6),
+        0 0 20px rgba(0,229,255,0.3);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    .menuButton:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 15px rgba(0,229,255,0.9),
+        0 0 30px rgba(0,229,255,0.6);
+      background: radial-gradient(circle at top, #37474f, #000000);
+    }
+
+    .menuButton:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 0 8px rgba(0,229,255,0.7),
+        0 0 16px rgba(0,229,255,0.4);
+    }
+
+    #gameOverScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      text-shadow: 0 0 10px black;
+      z-index: 25;
+    }
+
+    .gameOverButtons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .gameOverBtn {
+      padding: 10px 24px;
+      font-size: 18px;
+      background: black;
+      color: white;
+      border: 2px solid white;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
+    }
+
+    .gameOverBtn:hover {
+      background: #212121;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .gameOverBtn.quit {
+      border-color: #ff5252;
+      color: #ff5252;
+    }
+
+    .gameOverBtn.quit:hover {
+      background: #ff5252;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      #gameTitle {
+        font-size: 40px;
+      }
+
+      #gameSubtitle {
+        font-size: 14px;
+      }
+
+      #modeTitle {
+        font-size: 16px;
+      }
+
+      .menuButton {
+        min-width: 220px;
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+
+      #gameOverScreen {
+        font-size: 28px;
+      }
+
+      .gameOverButtons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .gameOverBtn {
+        font-size: 16px;
+        padding: 8px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <div id="topArea">
+      <canvas id="gameCanvas"></canvas>
+      <div id="crosshair"></div>
+
+      <div id="hud">
+        <div>Incidents Resolved: <span id="score">0</span></div>
+        <div>Misses: <span id="misses">0</span></div>
+        <div>Mode: <span id="modeLabel">None</span></div>
+      </div>
+
+      <div id="titleScreen">
+        <div id="gameTitle">Infrastructure Initiative</div>
+        <div id="gameSubtitle">Operational Incident Simulator</div>
+        <div id="modeTitle">Operational Modes</div>
+        <div id="modeButtons">
+          <button class="menuButton" data-mode="oncall">On-Call Simulation</button>
+          <button class="menuButton" data-mode="warroom">War Room Mode</button>
+          <button class="menuButton" data-mode="changewindow">Change Window</button>
+          <button class="menuButton" data-mode="compliance">Compliance Gauntlet</button>
+          <button class="menuButton" data-mode="chaos">Chaos Engineering Mode</button>
+        </div>
+      </div>
+
+      <div id="gameOverScreen">
+        INCIDENT OVER<br>DATA SCRUBBED
+        <div class="gameOverButtons">
+          <button class="gameOverBtn" id="restartBtn">RESTART</button>
+          <button class="gameOverBtn quit" id="quitBtn">QUIT</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="logConsole"></div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const container = document.getElementById("topArea");
+    const crosshair = document.getElementById("crosshair");
+    const scoreEl = document.getElementById("score");
+    const missesEl = document.getElementById("misses");
+    const modeLabel = document.getElementById("modeLabel");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const restartBtn = document.getElementById("restartBtn");
+    const quitBtn = document.getElementById("quitBtn");
+    const titleScreen = document.getElementById("titleScreen");
+    const modeButtons = document.querySelectorAll(".menuButton");
+    const logConsole = document.getElementById("logConsole");
+
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    window.addEventListener("resize", () => {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    const mouse = { x: width / 2, y: height / 2 };
+
+    container.addEventListener("mousemove", (e) => {
+      const rect = container.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+
+      crosshair.style.left = mouse.x + "px";
+      crosshair.style.top = mouse.y + "px";
+    });
+
+    container.addEventListener("click", () => {
+      if (!gameOver && gameRunning) shoot();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      location.reload();
+    });
+
+    quitBtn.addEventListener("click", () => {
+      // Mark that the game was played
+      try {
+        sessionStorage.setItem("playedGame", "yes");
+      } catch (e) {
+        console.log("Session storage not available");
+      }
+      // Redirect to index.html
+      window.location.href = "index.html";
+    });
+
+    // ESC key to pause/quit during game
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && gameRunning && !gameOver) {
+        const confirmQuit = confirm("Quit to main menu?");
+        if (confirmQuit) {
+          try {
+            sessionStorage.setItem("playedGame", "yes");
+          } catch (err) {
+            console.log("Session storage not available");
+          }
+          window.location.href = "index.html";
+        }
+      }
+    });
+
+    // Log console
+    const MAX_LOG_LINES = 80;
+    function logMessage(level, msg) {
+      const line = document.createElement("div");
+      line.classList.add("log-line");
+      if (level === "info") line.classList.add("log-info");
+      if (level === "resolved") line.classList.add("log-resolved");
+      if (level === "warning") line.classList.add("log-warning");
+      if (level === "error") line.classList.add("log-error");
+      if (level === "debug") line.classList.add("log-debug");
+      const timestamp = new Date().toISOString().split("T")[1].split(".")[0];
+      line.textContent = `[${timestamp}] ${msg}`;
+      logConsole.appendChild(line);
+
+      while (logConsole.children.length > MAX_LOG_LINES) {
+        logConsole.removeChild(logConsole.firstChild);
+      }
+      logConsole.scrollTop = logConsole.scrollHeight;
+    }
+
+    // Modes
+    const modeConfig = {
+      oncall: {
+        label: "On-Call Simulation",
+        spawnInterval: 1300,
+        forbiddenChance: 0.2,
+        speedMultiplier: 1.0
+      },
+      warroom: {
+        label: "War Room Mode",
+        spawnInterval: 900,
+        forbiddenChance: 0.3,
+        speedMultiplier: 1.2
+      },
+      changewindow: {
+        label: "Change Window",
+        spawnInterval: 1100,
+        forbiddenChance: 0.35,
+        speedMultiplier: 1.1
+      },
+      compliance: {
+        label: "Compliance Gauntlet",
+        spawnInterval: 1200,
+        forbiddenChance: 0.5,
+        speedMultiplier: 0.9
+      },
+      chaos: {
+        label: "Chaos Engineering Mode",
+        spawnInterval: 700,
+        forbiddenChance: 0.25,
+        speedMultiplier: 1.5
+      }
+    };
+
+    let currentMode = null;
+    let spawnInterval = 1200;
+    let forbiddenChance = 0.25;
+    let speedMultiplier = 1.0;
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const modeKey = btn.getAttribute("data-mode");
+        const cfg = modeConfig[modeKey];
+        currentMode = modeKey;
+        spawnInterval = cfg.spawnInterval;
+        forbiddenChance = cfg.forbiddenChance;
+        speedMultiplier = cfg.speedMultiplier;
+        modeLabel.textContent = cfg.label;
+        titleScreen.style.display = "none";
+        gameRunning = true;
+        logMessage("info", `Infrastructure Initiative started in mode: ${cfg.label}`);
+      });
+    });
+
+    let incidents = [];
+    let forbidden = [];
+    let explosions = [];
+    let corruptedFiles = [];
+    let shatteredPieces = [];
+    let score = 0;
+    let misses = 0;
+    let lastSpawn = 0;
+    let gameOver = false;
+    let gameRunning = false;
+
+    function createIncident() {
+      const radius = 22 + Math.random() * 18;
+      const baseSpeed = 1 + Math.random() * 1.5;
+      const speed = baseSpeed * speedMultiplier;
+
+      const side = Math.floor(Math.random() * 4);
+      let x, y, vx, vy;
+
+      if (side === 0) {
+        x = -radius;
+        y = Math.random() * height;
+        vx = speed;
+        vy = (Math.random() - 0.5) * speed;
+      } else if (side === 1) {
+        x = width + radius;
+        y = Math.random() * height;
+        vx = -speed;
+        vy = (Math.random() - 0.5) * speed;
+      } else if (side === 2) {
+        x = Math.random() * width;
+        y = -radius;
+        vx = (Math.random() - 0.5) * speed;
+        vy = speed;
+      } else {
+        x = Math.random() * width;
+        y = height + radius;
+        vx = (Math.random() - 0.5) * speed;
+        vy = -speed;
+      }
+
+      const types = [
+        { label: "Kafka Queue Overload", color: "#ffb300" },
+        { label: "Hadoop Node Failure", color: "#00e676" },
+        { label: "Spark Job Explosion", color: "#ff5252" },
+        { label: "Zookeeper Desync", color: "#7c4dff" },
+        { label: "Database Deadlock", color: "#29b6f6" }
+      ];
+
+      const type = types[Math.floor(Math.random() * types.length)];
+
+      incidents.push({
+        x, y, vx, vy, radius,
+        label: type.label,
+        color: type.color,
+        alive: true,
+        hover: false
+      });
+
+      logMessage("info", `Incident detected: ${type.label}`);
+    }
+
+    function createForbidden() {
+      const radius = 28;
+      const baseSpeed = 0.8 + Math.random();
+      const speed = baseSpeed * speedMultiplier;
+
+      const side = Math.floor(Math.random() * 4);
+      let x, y, vx, vy;
+
+      if (side === 0) {
+        x = -radius;
+        y = Math.random() * height;
+        vx = speed;
+        vy = (Math.random() - 0.5) * speed;
+      } else if (side === 1) {
+        x = width + radius;
+        y = Math.random() * height;
+        vx = -speed;
+        vy = (Math.random() - 0.5) * speed;
+      } else if (side === 2) {
+        x = Math.random() * width;
+        y = -radius;
+        vx = (Math.random() - 0.5) * speed;
+        vy = speed;
+      } else {
+        x = Math.random() * width;
+        y = height + radius;
+        vx = (Math.random() - 0.5) * speed;
+        vy = -speed;
+      }
+
+      const labels = [
+        "Compliance Review",
+        "Audit Control",
+        "SOX Checkpoint",
+        "Unapproved Change",
+        "Risk Assessment",
+        "Security Exception"
+      ];
+
+      const label = labels[Math.floor(Math.random() * labels.length)];
+
+      forbidden.push({
+        x, y, vx, vy, radius,
+        label,
+        alive: true
+      });
+
+      logMessage("warning", `Forbidden object in play: ${label}`);
+    }
+
+    function createExplosion(x, y, color) {
+      explosions.push({
+        x, y,
+        radius: 10,
+        alpha: 1,
+        color
+      });
+    }
+
+    function createCorruptedFile(x, y) {
+      corruptedFiles.push({
+        x,
+        y,
+        age: 0,
+        life: 600,
+        size: 20
+      });
+      logMessage("debug", "Floppy disk artifact created.");
+    }
+
+    function shatterFile(x, y, size) {
+      const pieceCount = 14;
+
+      for (let i = 0; i < pieceCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.3 + Math.random() * 0.5;
+
+        shatteredPieces.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 6 + Math.random() * 14,
+          alpha: 1,
+          decay: 0.01 + Math.random() * 0.02,
+          color: Math.random() > 0.5 ? "#1e1e1e" : "#d9d9d9"
+        });
+      }
+      logMessage("debug", `Floppy disk artifact shattered into ${pieceCount} fragments.`);
+    }
+
+    function triggerGameOver(reason) {
+      if (gameOver) return;
+      gameOver = true;
+      gameRunning = false;
+      gameOverScreen.style.display = "flex";
+      logMessage("error", `GAME OVER: ${reason}`);
+    }
+
+    function shoot() {
+      let hit = false;
+
+      // Forbidden first
+      forbidden.forEach((f) => {
+        const dx = mouse.x - f.x;
+        const dy = mouse.y - f.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < f.radius) {
+          hit = true;
+          triggerGameOver(`Policy violation: Shot forbidden object (${f.label})`);
+        }
+      });
+
+      if (gameOver) return;
+
+      incidents.forEach((inc) => {
+        const dx = mouse.x - inc.x;
+        const dy = mouse.y - inc.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < inc.radius) {
+          inc.alive = false;
+          hit = true;
+          score++;
+          scoreEl.textContent = score;
+          createExplosion(inc.x, inc.y, inc.color);
+          createCorruptedFile(inc.x, inc.y);
+          logMessage("resolved", `Incident resolved: ${inc.label}`);
+        }
+      });
+
+      incidents = incidents.filter(i => i.alive);
+
+      if (!hit) {
+        misses++;
+        missesEl.textContent = misses;
+        logMessage("debug", "Shot missed all targets.");
+      }
+    }
+
+    function update(delta) {
+      if (!gameRunning || gameOver) return;
+
+      lastSpawn += delta;
+      if (lastSpawn > spawnInterval) {
+        createIncident();
+        if (Math.random() < forbiddenChance) {
+          createForbidden();
+        }
+        lastSpawn = 0;
+      }
+
+      incidents.forEach((inc) => {
+        inc.x += inc.vx;
+        inc.y += inc.vy;
+
+        const dx = mouse.x - inc.x;
+        const dy = mouse.y - inc.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        inc.hover = dist < inc.radius + 10;
+
+        if (
+          inc.x < -100 || inc.x > width + 100 ||
+          inc.y < -100 || inc.y > height + 100
+        ) {
+          inc.alive = false;
+          misses++;
+          missesEl.textContent = misses;
+          logMessage("warning", `Incident escaped: ${inc.label}`);
+        }
+      });
+
+      incidents = incidents.filter(i => i.alive);
+
+      forbidden.forEach((f) => {
+        f.x += f.vx;
+        f.y += f.vy;
+
+        if (
+          f.x < -100 || f.x > width + 100 ||
+          f.y < -100 || f.y > height + 100
+        ) {
+          f.alive = false;
+        }
+      });
+
+      forbidden = forbidden.filter(f => f.alive);
+
+      explosions.forEach((ex) => {
+        ex.radius += 0.3 * delta;
+        ex.alpha -= 0.0015 * delta;
+      });
+      explosions = explosions.filter(ex => ex.alpha > 0);
+
+      corruptedFiles.forEach((cf) => {
+        cf.age += delta;
+        cf.size += 0.18 * delta;
+
+        if (cf.age > cf.life) {
+          shatterFile(cf.x, cf.y, cf.size);
+        }
+      });
+
+      corruptedFiles = corruptedFiles.filter(cf => cf.age < cf.life);
+
+      shatteredPieces.forEach((p) => {
+        p.x += p.vx * delta;
+        p.y += p.vy * delta;
+        p.alpha -= p.decay;
+      });
+
+      shatteredPieces = shatteredPieces.filter(p => p.alpha > 0);
+    }
+
+    function drawIncidents() {
+      incidents.forEach((inc) => {
+        let drawX = inc.x;
+        let drawY = inc.y;
+
+        if (inc.hover) {
+          drawX += (Math.random() - 0.5) * 4;
+          drawY += (Math.random() - 0.5) * 4;
+
+          ctx.strokeStyle = "rgba(255, 0, 0, 0.9)";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, inc.radius + 10, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = Math.random() > 0.5 ? "#ff4444" : "#ff0000";
+          ctx.font = "bold 14px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText("PROCESS FAILED", drawX, drawY + inc.radius + 20);
+        }
+
+        ctx.fillStyle = inc.color;
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, inc.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "white";
+        ctx.font = "12px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(inc.label, drawX, drawY - inc.radius - 5);
+      });
+    }
+
+    function drawForbidden() {
+      forbidden.forEach((f) => {
+        ctx.save();
+
+        ctx.fillStyle = "#ff0000";
+        ctx.beginPath();
+        ctx.moveTo(f.x, f.y - f.radius);
+        ctx.lineTo(f.x - f.radius, f.y + f.radius);
+        ctx.lineTo(f.x + f.radius, f.y + f.radius);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 20px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("!", f.x, f.y + 8);
+
+        ctx.font = "12px Arial";
+        ctx.fillText(f.label, f.x, f.y + f.radius + 16);
+
+        ctx.restore();
+      });
+    }
+
+    function drawExplosions() {
+      explosions.forEach((ex) => {
+        ctx.save();
+        ctx.globalAlpha = ex.alpha;
+        ctx.fillStyle = ex.color;
+        ctx.beginPath();
+        ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function drawCorruptedFiles() {
+      corruptedFiles.forEach((cf) => {
+        const t = cf.age / cf.life;
+        const alpha = 1 - t;
+
+        const baseSize = 40;
+        const size = baseSize + t * 140;
+
+        const shakeX = (Math.random() - 0.5) * 6;
+        const shakeY = (Math.random() - 0.5) * 6;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        const x = cf.x + shakeX;
+        const y = cf.y + shakeY;
+
+        ctx.fillStyle = "#1e1e1e";
+        ctx.fillRect(x - size/2, y - size/2, size, size);
+
+        ctx.fillStyle = "#d9d9d9";
+        ctx.fillRect(x - size/2 + size*0.1, y - size/2 + size*0.1, size*0.8, size*0.25);
+
+        ctx.fillStyle = "#bfbfbf";
+        ctx.fillRect(x - size/2 + size*0.1, y - size/2 + size*0.35, size*0.8, size*0.15);
+
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.arc(x, y + size*0.15, size*0.12, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#ff0000";
+        ctx.lineWidth = size * 0.08;
+        ctx.beginPath();
+        ctx.moveTo(x - size/2, y + size/2);
+        ctx.lineTo(x + size/2, y - size/2);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+    }
+
+    function drawShatteredPieces() {
+      shatteredPieces.forEach((p) => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.restore();
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      drawIncidents();
+      drawForbidden();
+      drawExplosions();
+      drawCorruptedFiles();
+      drawShatteredPieces();
+    }
+
+    let lastTime = performance.now();
+
+    function gameLoop(time) {
+      const delta = time - lastTime;
+      lastTime = time;
+
+      update(delta);
+      draw();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>I Prevent Infrastructure Initiatives</title>
+<style>
+    :root {
+        --bg1: #050816;
+        --bg2: #120b33;
+        --accent: #ff4b9f;
+        --accent2: #4bffdf;
+        --accent3: #ffd54b;
+        --text-main: #f5f5ff;
+        --text-soft: #a8b2ff;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        height: 100vh;
+        overflow: hidden;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, #1b1b3a 0, #050816 45%, #000 100%);
+        color: var(--text-main);
+    }
+
+    /* Animated gradient sky */
+    .sky {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at 20% 0%, #3b1d7a55 0, transparent 50%),
+                    radial-gradient(circle at 80% 0%, #ff4b9f33 0, transparent 55%),
+                    radial-gradient(circle at 50% 100%, #4bffdf22 0, transparent 60%);
+        mix-blend-mode: screen;
+        pointer-events: none;
+        animation: skyPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes skyPulse {
+        0%   { filter: hue-rotate(0deg) brightness(1); }
+        50%  { filter: hue-rotate(40deg) brightness(1.2); }
+        100% { filter: hue-rotate(-30deg) brightness(0.9); }
+    }
+
+    /* Floating particles */
+    .particle {
+        position: fixed;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: white;
+        box-shadow: 0 0 8px #fff, 0 0 16px #4bffdf;
+        opacity: 0.7;
+        animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+        0% {
+            transform: translateY(100vh) scale(0.4);
+            opacity: 0;
+        }
+        20% {
+            opacity: 0.9;
+        }
+        100% {
+            transform: translateY(-10vh) scale(1.1);
+            opacity: 0;
+        }
+    }
+
+    /* Firework bursts */
+    .firework {
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent2);
+        animation: explode 1.4s ease-out forwards;
+        pointer-events: none;
+    }
+
+    @keyframes explode {
+        0% {
+            transform: scale(0.2);
+            opacity: 1;
+        }
+        40% {
+            transform: scale(1.8);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(0.1);
+            opacity: 0;
+        }
+    }
+
+    /* Main layout */
+    .container {
+        position: relative;
+        z-index: 10;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .card {
+        position: relative;
+        max-width: 900px;
+        width: 100%;
+        padding: 3rem 3.5rem;
+        border-radius: 24px;
+        background: radial-gradient(circle at top left, #2a1a4a 0, #050816 55%, #000 100%);
+        box-shadow:
+            0 0 40px rgba(0, 0, 0, 0.9),
+            0 0 60px rgba(75, 255, 223, 0.25),
+            0 0 120px rgba(255, 75, 159, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+    }
+
+    /* Neon border sweep */
+    .card::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: conic-gradient(
+            from 0deg,
+            #ff4b9f,
+            #ffd54b,
+            #4bffdf,
+            #ff4b9f
+        );
+        opacity: 0.6;
+        filter: blur(6px);
+        z-index: -2;
+        animation: borderSweep 8s linear infinite;
+    }
+
+    .card::after {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 22px;
+        background: radial-gradient(circle at top, #1b1235 0, #050816 55%, #000 100%);
+        z-index: -1;
+    }
+
+    @keyframes borderSweep {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .tagline {
+        font-size: 0.85rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent2);
+        margin-bottom: 1.5rem;
+        opacity: 0.9;
+    }
+
+    .headline {
+        font-size: clamp(2.4rem, 4vw, 3.4rem);
+        line-height: 1.1;
+        margin-bottom: 1.2rem;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+    }
+
+    .headline span.highlight {
+        background: linear-gradient(120deg, var(--accent), var(--accent2), var(--accent3));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
+        position: relative;
+    }
+
+    .headline span.highlight::after {
+        content: "";
+        position: absolute;
+        left: -4px;
+        right: -4px;
+        bottom: -6px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+        opacity: 0.7;
+        filter: blur(1px);
+    }
+
+    .sub {
+        font-size: 1rem;
+        color: var(--text-soft);
+        max-width: 540px;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .sub strong {
+        color: var(--accent3);
+        font-weight: 600;
+    }
+
+    .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2.4rem;
+    }
+
+    .pill {
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%);
+        font-size: 0.85rem;
+        color: var(--text-soft);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        backdrop-filter: blur(6px);
+    }
+
+    .pill-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent2);
+        box-shadow: 0 0 10px var(--accent2);
+    }
+
+    .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn-primary {
+        position: relative;
+        padding: 0.9rem 1.8rem;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #050816;
+        background: linear-gradient(135deg, var(--accent3), var(--accent), var(--accent2));
+        box-shadow:
+            0 0 18px rgba(255, 213, 75, 0.6),
+            0 0 32px rgba(255, 75, 159, 0.5);
+        overflow: hidden;
+    }
+
+    .btn-primary span {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-primary::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 0 0, #ffffffaa 0, transparent 55%);
+        opacity: 0;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        transform: translate3d(-20%, -40%, 0);
+    }
+
+    .btn-primary:hover::before {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+
+    .btn-ghost {
+        padding: 0.85rem 1.4rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%);
+        color: var(--text-main);
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(6px);
+    }
+
+    .btn-ghost span.icon {
+        font-size: 1.1rem;
+    }
+
+    .footer-note {
+        margin-top: 1.8rem;
+        font-size: 0.8rem;
+        color: #7f8cff;
+        opacity: 0.85;
+    }
+
+    .footer-note span {
+        color: var(--accent2);
+    }
+
+    @media (max-width: 700px) {
+        .card {
+            padding: 2.2rem 1.8rem;
+        }
+        .headline {
+            font-size: 2rem;
+        }
+        .sub {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+
+<div class="container">
+    <div class="card">
+        <div class="tagline">CINEMATIC DEVOPS • Infrastructure Initiative UNIVERSE • REAL‑WORLD IMPACT</div>
+
+        <div class="headline">
+            I don’t fix problems —<br />
+            <span class="highlight">I prevent Infrastructure Initiatives.</span>
+        </div>
+
+        <div class="sub">
+            I design <strong>config‑driven, resilient infrastructures</strong> that behave like a well‑tuned game engine:
+            every subsystem has a role, every failure has a containment plan, and every deploy feels like a controlled
+            fireworks show instead of a production fire.
+        </div>
+
+        <div class="meta-row">
+            <div class="pill">
+                <div class="pill-dot"></div>
+                Infrastructure Initiative Architect
+            </div>
+            <div class="pill">
+                <div class="pill-dot" style="background: var(--accent); box-shadow:0 0 10px var(--accent);"></div>
+                Linux • CI/CD • Observability
+            </div>
+            <div class="pill">
+                <div class="pill-dot" style="background: var(--accent3); box-shadow:0 0 10px var(--accent3);"></div>
+                YAML‑Driven Worlds & Launchers
+            </div>
+        </div>
+
+        <div class="cta-row">
+            <button class="btn-primary" id="btnFireworks">
+                <span>Launch the Meltdown Demo</span>
+            </button>
+            <button class="btn-ghost">
+                <span class="icon">⚙️</span>
+                View Systems & Runbooks
+            </button>
+        </div>
+
+        <div class="footer-note">
+            Every click is a controlled detonation. <span>No outages. Just spectacle.</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Create floating particles
+    function createParticles(count) {
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement("div");
+            p.className = "particle";
+            const size = Math.random() * 3 + 2;
+            p.style.width = size + "px";
+            p.style.height = size + "px";
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.animationDuration = 6 + Math.random() * 10 + "s";
+            p.style.animationDelay = Math.random() * 8 + "s";
+            document.body.appendChild(p);
+        }
+    }
+
+    // Firework burst
+    function spawnFirework(x, y) {
+        const fw = document.createElement("div");
+        fw.className = "firework";
+        fw.style.left = x + "px";
+        fw.style.top = y + "px";
+
+        const colors = ["#ff4b9f", "#4bffdf", "#ffd54b", "#9b6bff"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        fw.style.background = color;
+        fw.style.boxShadow = `0 0 14px ${color}, 0 0 32px ${color}`;
+
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 1400);
+    }
+
+    // Cluster of fireworks
+    function fireworkShow(centerX, centerY) {
+        const bursts = 6 + Math.floor(Math.random() * 6);
+        for (let i = 0; i < bursts; i++) {
+            const angle = (Math.PI * 2 * i) / bursts;
+            const radius = 40 + Math.random() * 80;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            setTimeout(() => spawnFirework(x, y), i * 80);
+        }
+    }
+
+    // Button-triggered show
+    const btn = document.getElementById("btnFireworks");
+    btn.addEventListener("click", () => {
+        const rect = btn.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top;
+        fireworkShow(centerX, centerY);
+
+        // Subtle button pulse
+        btn.style.transform = "scale(1.03)";
+        setTimeout(() => (btn.style.transform = "scale(1)"), 180);
+    });
+
+    // Ambient random fireworks
+    setInterval(() => {
+        const x = window.innerWidth * (0.15 + Math.random() * 0.7);
+        const y = window.innerHeight * (0.15 + Math.random() * 0.5);
+        fireworkShow(x, y);
+    }, 4500);
+
+    // Initial particles
+    createParticles(45);
+</script>
+</body>
+</html>

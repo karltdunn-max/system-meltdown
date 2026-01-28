@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auto Crossword Puzzle</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: #fff;
+    padding: 20px;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  #crossword {
+    display: grid;
+    grid-template-columns: repeat(15, 40px);
+    grid-template-rows: repeat(15, 40px);
+    gap: 1px;
+    margin-bottom: 20px;
+  }
+
+  .cell {
+    width: 40px;
+    height: 40px;
+    background: #111a2f;
+    border: 1px solid #1f2a44;
+    text-align: center;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .cell input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    outline: none;
+  }
+
+  .blocked {
+    background: transparent;
+    border: none;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  #clues {
+    margin-top: 20px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>2. Solve Crossword</h2>
+
+<div id="crossword"></div>
+
+<button onclick="solve()">Solve Crossword</button>
+
+<div id="clues">
+  <h3>Clues</h3>
+  <ul id="clueList"></ul>
+</div>
+
+<script>
+/* ===========================
+   WORD LIST
+=========================== */
+const words = [
+  { answer: "PLATFORM", clue: "Infrastructure base layer" },
+  { answer: "ANSIBLE", clue: "Automation tool" },
+  { answer: "CLOUD", clue: "Scalable compute environment" },
+  { answer: "SPLUNK", clue: "Log analysis tool" },
+  { answer: "SERVER", clue: "Runs services" },
+  { answer: "KUBERNETES", clue: "Container orchestration" },
+  { answer: "LINUX", clue: "Open-source OS" },
+  { answer: "NETWORK", clue: "Connected systems" },
+  { answer: "SECURITY", clue: "Protects systems" },
+  { answer: "DATABASE", clue: "Stores structured data" }
+];
+
+const SIZE = 15;
+let grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
+let placedWords = [];
+
+/* ===========================
+   PLACE WORDS
+=========================== */
+function canPlace(word, r, c, dir) {
+  for (let i = 0; i < word.length; i++) {
+    let nr = dir === "down" ? r + i : r;
+    let nc = dir === "across" ? c + i : c;
+
+    if (nr >= SIZE || nc >= SIZE) return false;
+    if (grid[nr][nc] && grid[nr][nc] !== word[i]) return false;
+  }
+  return true;
+}
+
+function placeWord(word, r, c, dir) {
+  for (let i = 0; i < word.length; i++) {
+    let nr = dir === "down" ? r + i : r;
+    let nc = dir === "across" ? c + i : c;
+    grid[nr][nc] = word[i];
+  }
+  placedWords.push({ word, r, c, dir });
+}
+
+function autoPlace() {
+  // First word center
+  const first = words[0].answer;
+  placeWord(first, 7, 3, "across");
+
+  for (let w = 1; w < words.length; w++) {
+    const word = words[w].answer;
+    let placed = false;
+
+    for (let pw of placedWords) {
+      for (let i = 0; i < pw.word.length; i++) {
+        for (let j = 0; j < word.length; j++) {
+          if (pw.word[i] === word[j]) {
+            let r = pw.r + (pw.dir === "down" ? i : 0) - (pw.dir === "across" ? j : 0);
+            let c = pw.c + (pw.dir === "across" ? i : 0) - (pw.dir === "down" ? j : 0);
+            let dir = pw.dir === "across" ? "down" : "across";
+
+            if (canPlace(word, r, c, dir)) {
+              placeWord(word, r, c, dir);
+              placed = true;
+              break;
+            }
+          }
+        }
+        if (placed) break;
+      }
+      if (placed) break;
+    }
+  }
+}
+
+/* ===========================
+   RENDER GRID
+=========================== */
+function render() {
+  const container = document.getElementById("crossword");
+  container.innerHTML = "";
+
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+
+      if (!grid[r][c]) {
+        cell.classList.add("blocked");
+      } else {
+        const input = document.createElement("input");
+        input.maxLength = 1;
+        input.dataset.answer = grid[r][c];
+        cell.appendChild(input);
+      }
+
+      container.appendChild(cell);
+    }
+  }
+}
+
+/* ===========================
+   CLUES
+=========================== */
+function renderClues() {
+  const ul = document.getElementById("clueList");
+  words.forEach((w, i) => {
+    const li = document.createElement("li");
+    li.textContent = `${i + 1}. ${w.clue}`;
+    ul.appendChild(li);
+  });
+}
+
+/* ===========================
+   SOLVE BUTTON
+=========================== */
+function solve() {
+  document.querySelectorAll("input").forEach(input => {
+    input.value = input.dataset.answer;
+  });
+}
+
+/* ===========================
+   INIT
+=========================== */
+autoPlace();
+render();
+renderClues();
+</script>
+
+</body>
+</html>

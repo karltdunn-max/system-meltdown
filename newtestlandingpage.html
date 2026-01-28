@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Karl Dunn – Technical Portfolio</title>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    [id] { scroll-margin-top: 120px; }
+
+    #audioToggle {
+      position: fixed; bottom: 25px; right: 25px; background-color: #000000; color: white;
+      border: none; padding: 12px 18px; border-radius: 8px; font-family: Verdana;
+      cursor: pointer; font-size: 14px; box-shadow: 0px 0px 10px rgba(0,0,0,0.4); z-index: 9999;
+    }
+
+    #resumeBtn {
+      position: fixed; bottom: 25px; left: 25px; background-color: #00bcd4; color: white;
+      border: none; padding: 12px 24px; border-radius: 8px; font-family: Verdana;
+      cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0px 0px 15px rgba(0, 188, 212, 0.5);
+      z-index: 9999; transition: all 0.3s ease;
+    }
+
+    #projects-section {
+      background: linear-gradient(0deg, rgba(0, 188, 212, 0.03) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(0, 188, 212, 0.03) 1px, transparent 1px),
+                  radial-gradient(ellipse at center, #0a1628 0%, #000000 100%);
+      background-size: 50px 50px, 50px 50px, 100% 100%;
+      position: relative; padding: 40px 0;
+    }
+
+    .project-row {
+      margin-bottom: 30px; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 188, 212, 0.2); transition: all 0.4s ease;
+      border: 1px solid rgba(0, 188, 212, 0.3); background: rgba(10, 22, 40, 0.9);
+    }
+
+    .project-image-container { position: relative; overflow: hidden; height: 350px; background: #000; }
+    .project-image-container img { width: 100%; height: 100%; object-fit: cover; }
+    .project-title { font-family: Verdana; font-size: 24px; font-weight: bold; color: #00bcd4; border-left: 4px solid #00bcd4; padding-left: 15px; margin-bottom: 20px; }
+    .project-bullet { font-family: Verdana; font-size: 15px; color: #b8d4e8; line-height: 2; margin-bottom: 10px; }
+    
+    .project-link {
+      display: inline-block; margin-top: 20px; padding: 12px 28px;
+      background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+      color: white; text-decoration: none; font-family: Verdana; font-weight: bold;
+      border-radius: 25px; transition: all 0.3s ease;
+    }
+
+    /* Runbook styling */
+    .runbook-container { display: inline-block; text-align: center; margin: 10px 15px; transition: transform 0.3s ease; }
+    .runbook-icon { width: 80px; height: 100px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; margin: 0 auto 10px auto; border: 3px solid #fff; position: relative; }
+    .runbook-label { font-family: Verdana; font-size: 13px; font-weight: bold; color: #ffffff; }
+
+    /* Hadoop Interaction Styles */
+    .server-node { cursor: pointer; transition: all 0.3s ease; }
+    .server-node:hover { transform: scale(1.05); }
+    .hadoop-action-btn { 
+      cursor: pointer; padding: 8px 15px; background: #222; border: 1px solid #00bcd4; 
+      color: #00bcd4; font-family: Verdana; font-size: 12px; border-radius: 4px;
+    }
+    .hadoop-action-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #666; color: #666; }
+    .action-complete { background: #00bcd4 !important; color: white !important; }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .shaking { animation: shake 0.2s infinite; }
+  </style>
+</head>
+
+<body bgcolor="#F5F5F5">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="20" bgcolor="#000000">
+  <tr>
+    <td align="center">
+      <font face="Verdana" color="white" size="6"><strong>Karl Dunn</strong></font><br>
+      <font face="Verdana" color="white" size="3">Application Support • Systems Integration • DevOps • Automation</font>
+    </td>
+  </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="40" style="background: #2c3e50;">
+  <tr>
+    <td align="center">
+      <font face="Verdana" size="5" color="white"><strong>📚 Technical Runbooks</strong></font><br><br>
+      <a href="linux_runbook_page.html" class="runbook-container"><div class="runbook-icon"></div><div class="runbook-label">Linux</div></a>
+      <a href="ansible_runbook_page.html" class="runbook-container"><div class="runbook-icon"></div><div class="runbook-label">Ansible</div></a>
+      <a href="hadoop_runbook_page.html" class="runbook-container"><div class="runbook-icon"></div><div class="runbook-label">Hadoop</div></a>
+      <a href="splunk_runbook_page.html" class="runbook-container"><div class="runbook-icon"></div><div class="runbook-label">Splunk</div></a>
+    </td>
+  </tr>
+</table>
+
+<div id="projects-section">
+<table width="90%" align="center" border="0" cellspacing="20" cellpadding="20">
+  
+  <tr id="hadoop">
+    <td>
+      <div class="project-row">
+        <div class="project-image-container">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Hadoop_logo.svg" alt="Hadoop Project" style="width:40%; margin: 50px auto; display:block;">
+        </div>
+        
+        <div style="padding: 35px;">
+          <div class="project-title">Distributed Processing Network</div>
+          <div class="project-bullet">Multi-node architecture mirrors game server clusters</div>
+          <div class="project-bullet">HDFS replication ensures fault tolerance like game save backups</div>
+          <div class="project-bullet">MapReduce processes massive datasets in parallel operations</div>
+
+          <div style="margin-top: 30px; padding: 25px; background: rgba(0, 0, 0, 0.7); border-radius: 12px; border: 1px solid #00bcd4;">
+            
+            <div style="text-align: center; margin-bottom: 30px; position: relative; height: 150px;">
+              <div style="color: #00bcd4; font-family: Verdana; font-size: 14px; margin-bottom: 20px;">
+                1. Click servers to initialize cluster collision! 💥
+              </div>
+              
+              <div id="leftServer" class="server-node" style="position: absolute; left: 20%; width: 80px; height: 100px; background: #667eea; border: 2px solid #fff; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">
+                <span style="font-size: 30px;">🖥️</span>NameNode
+              </div>
+
+              <div id="collisionBurst" style="position: absolute; left: 50%; top: 30%; transform: translateX(-50%); font-size: 50px; opacity: 0; transition: 0.3s;">💥</div>
+
+              <div id="rightServer" class="server-node" style="position: absolute; right: 20%; width: 80px; height: 100px; background: #f5576c; border: 2px solid #fff; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">
+                <span style="font-size: 30px;">🖥️</span>DataNode
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+              <button id="restart-btn" class="hadoop-action-btn" disabled>⚙️ Restart Hadoop</button>
+              <button id="process-btn" class="hadoop-action-btn" disabled>📊 Running Processes</button>
+              <button id="webui-btn" class="hadoop-action-btn" disabled>🌐 Web UI URLs</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; height: 200px;">
+              <div id="term-restart" style="flex:1; background: #000; border: 1px solid #444; color: #00ff00; font-family: monospace; font-size: 11px; padding: 10px; overflow-y: auto;"></div>
+              <div id="term-process" style="flex:1; background: #000; border: 1px solid #444; color: #00ff00; font-family: monospace; font-size: 11px; padding: 10px; overflow-y: auto;"></div>
+              <div id="term-webui" style="flex:1; background: #000; border: 1px solid #444; color: #00ff00; font-family: monospace; font-size: 11px; padding: 10px; overflow-y: auto;"></div>
+            </div>
+          </div>
+
+          <a href="hadoop_runbook_page.html" class="project-link">View Full Hadoop Runbook →</a>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+</div>
+
+<button id="resumeBtn" onclick="alert('Resume link goes here')">📄 View Resume</button>
+<button id="audioToggle">🎵 Play Music</button>
+
+<script>
+  // DOM Elements
+  const leftSrv = document.getElementById('leftServer');
+  const rightSrv = document.getElementById('rightServer');
+  const burst = document.getElementById('collisionBurst');
+  const btnRestart = document.getElementById('restart-btn');
+  const btnProcess = document.getElementById('process-btn');
+  const btnWeb = document.getElementById('webui-btn');
+  
+  const termRestart = document.getElementById('term-restart');
+  const termProcess = document.getElementById('term-process');
+  const termWeb = document.getElementById('term-webui');
+
+  let isSmashed = false;
+
+  // 1. Smash Logic
+  function handleSmash() {
+    if (isSmashed) return;
+    isSmashed = true;
+    
+    leftSrv.style.transition = "all 0.5s ease-in";
+    rightSrv.style.transition = "all 0.5s ease-in";
+    leftSrv.style.left = "42%";
+    rightSrv.style.right = "42%";
+
+    setTimeout(() => {
+      burst.style.opacity = "1";
+      btnRestart.disabled = false;
+      btnRestart.classList.add('shaking'); // Guide the user
+    }, 500);
+  }
+
+  leftSrv.onclick = handleSmash;
+  rightSrv.onclick = handleSmash;
+
+  // 2. Sequential Terminal Logic
+  btnRestart.onclick = function() {
+    this.classList.remove('shaking');
+    this.classList.add('action-complete');
+    btnProcess.disabled = false;
+    
+    const lines = [
+      "$ ./restart_hadoop.sh",
+      "Stopping NameNode...",
+      "Stopping DataNodes...",
+      "Starting HDFS...",
+      "Starting YARN...",
+      "Cluster online ✅"
+    ];
+    typeEffect(termRestart, lines);
+  };
+
+  btnProcess.onclick = function() {
+    this.classList.add('action-complete');
+    btnWeb.disabled = false;
+    const lines = [
+      "$ jps",
+      "12245 NameNode",
+      "12387 DataNode",
+      "12828 ResourceManager",
+      "12964 NodeManager",
+      "13472 Jps"
+    ];
+    typeEffect(termProcess, lines);
+  };
+
+  btnWeb.onclick = function() {
+    this.classList.add('action-complete');
+    const lines = [
+      "HDFS: http://localhost:9870",
+      "YARN: http://localhost:8088",
+      "DataNode: http://localhost:9864",
+      "History: http://localhost:19888"
+    ];
+    typeEffect(termWeb, lines);
+  };
+
+  function typeEffect(element, lines) {
+    element.innerHTML = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < lines.length) {
+        element.innerHTML += lines[i] + "<br>";
+        element.scrollTop = element.scrollHeight;
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+  }
+</script>
+
+</body>
+</html>
